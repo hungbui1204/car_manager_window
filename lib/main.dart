@@ -4,11 +4,18 @@ import 'package:car_manager_window/Home/HomeScreen.dart';
 import 'package:car_manager_window/InOut/InOutScreen.dart';
 import 'package:car_manager_window/Setting/SettingScreen.dart';
 import 'package:car_manager_window/Statistic/StatisticScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Login/LoginScreen.dart';
 import 'package:get/get.dart';
-void main() {
-  runApp(const MyApp());
+import 'firebase_options.dart';
+// Future main() async{
+//   await Firebase.initializeApp(
+//       options:  DefaultFirebaseOptions.android);
+//   return runApp(const MyApp());
+// }
+void main(){
+  return runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

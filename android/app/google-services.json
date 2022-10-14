@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "387750916082",
+    "firebase_url": "https://flutter-car-manager-mobile-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "flutter-car-manager-mobile",
+    "storage_bucket": "flutter-car-manager-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387750916082:android:9bbbdca17fd7fba489056b",
+        "android_client_info": {
+          "package_name": "com.example.car_manager_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "387750916082-tsntmasgqir1f98k3tvqv2jkkiul6199.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzOlHt6zBMDkmzuC42RiinXpfM1kZFb_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "387750916082-tsntmasgqir1f98k3tvqv2jkkiul6199.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "387750916082-ku1pj8su36v0tl5vtehedg6b51l8qe1u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.carManagerMobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387750916082:android:78944c68b9f0e36a89056b",
+        "android_client_info": {
+          "package_name": "com.example.car_manager_window"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "387750916082-tsntmasgqir1f98k3tvqv2jkkiul6199.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzOlHt6zBMDkmzuC42RiinXpfM1kZFb_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "387750916082-tsntmasgqir1f98k3tvqv2jkkiul6199.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "387750916082-ku1pj8su36v0tl5vtehedg6b51l8qe1u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.carManagerMobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

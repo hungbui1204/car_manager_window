@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:motion_toast/resources/arrays.dart';
-
-import '../model/account_model.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -19,16 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool hideTxt = true;
   bool userFocus = false;
   bool passwordFocus = false;
-  List<Map<String,String>> account = [
-    {
-      'user': '1',
-      'password': '1'
-    },
-    {
-      'user': 'hung',
-      'password': '123'
-    }
-  ];
   String? errorUsername(){
     String username = userController.value.text;
     if(username == '' && userFocus == true){

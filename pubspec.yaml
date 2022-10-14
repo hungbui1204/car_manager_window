@@ -41,6 +41,8 @@ dependencies:
   motion_toast: ^2.4.3
   syncfusion_flutter_datagrid: ^20.3.48
   syncfusion_flutter_charts: ^20.3.48
+  cloud_firestore: ^3.5.1
+  firebase_core: ^1.24.0
 
 dev_dependencies:
   flutter_test:
