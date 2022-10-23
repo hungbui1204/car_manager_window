@@ -48,7 +48,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCdnTfbryr5lxHakHyEcvnBx6CHdGye5-E',
-    appId: '1:387750916082:web:b975e17678f1413689056b',
+    appId: '1:387750916082:web:01ee70eff0036b9289056b',
     messagingSenderId: '387750916082',
     projectId: 'flutter-car-manager-mobile',
     authDomain: 'flutter-car-manager-mobile.firebaseapp.com',
