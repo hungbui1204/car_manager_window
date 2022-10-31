@@ -46,7 +46,9 @@ dependencies:
   flutterfire_cli: ^0.2.6
   firedart: ^0.9.0+1
   flutter_vlc_player: ^7.1.5
-  opencv_4: ^1.0.0
+  flutter_mjpeg: ^2.0.3
+#  firebase_ml_vision: ^0.12.0+3      # it only uses for Android and IOS platform
+  google_ml_vision: ^0.0.7
 
 dev_dependencies:
   flutter_test:

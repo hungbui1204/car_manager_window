@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:car_manager_window/InOut/preprocessor_frame.dart';
+import 'package:car_manager_window/data/global_data.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:get/get.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
@@ -11,25 +16,49 @@ class InOutScreen extends StatefulWidget {
 }
 
 class _InOutScreenState extends State<InOutScreen> {
-  late VlcPlayerController _videoPlayerController;
-  Future<void> initializePlayer() async {}
+  String result = '';
+  bool takePicture = false;
+  File? image;
 
-  @override
-  void initState() {
-    super.initState();
-    initializePlayer();
-    _videoPlayerController = VlcPlayerController.network(
-      'https://21.193.1.9:8081/video',
-      hwAcc: HwAcc.full,
-      autoPlay: true,
-      options: VlcPlayerOptions(),
-    );
-  }
+  // Another option which doesn't work as expected is commented.
 
-  @override
-  void dispose() async {
-    super.dispose();
-    await _videoPlayerController.stopRendererScanning();
+  // performImageLabeling() async{
+  //   final GoogleVisionImage firebaseVisionImage = GoogleVisionImage.fromFile(image!);
+  //   final TextRecognizer textRecognizer = GoogleVision.instance.textRecognizer();
+  //   VisionText visionText = await textRecognizer.processImage(firebaseVisionImage);
+  //
+  //   result = '';
+  //   String? text = visionText.text;
+  //   setState(() {
+  //
+  //     for (TextBlock block in visionText.blocks){
+  //       final Rect? boundingBox = block.boundingBox;
+  //       final List<Offset> cornerPoints = block.cornerPoints;
+  //       final String? text = block.text;
+  //       final List<RecognizedLanguage> languages = block.recognizedLanguages;
+  //       for(TextLine line in block.lines){
+  //         for (TextElement element in line.elements){
+  //           result += "${element.text} ";
+  //         }
+  //       }
+  //       result += "\n\n";
+  //     }
+  //   });
+  // }
+
+  String parsedtext = '';
+  parsethetext() async {
+    var bytes = GlobalData.image.bytes;
+    String img64 = base64Encode(bytes);
+    var url = 'https://api.ocr.space/parse/image';
+    var payload = {"base64Image": "data:image/jpg;base64,${img64.toString()}"};
+    var header = {"apikey": "K85183784788957"};
+    var post = await http.post(Uri.parse(url),body: payload,headers: header);
+    var result = jsonDecode(post.body);
+    setState(() {
+      parsedtext = result['ParsedResults'][0]['ParsedText'];
+      print(parsedtext);
+    });
   }
 
   @override
@@ -149,11 +178,16 @@ class _InOutScreenState extends State<InOutScreen> {
                       // child: Image(
                       //   image: NetworkImage("https://192.168.32.69:8080"),
                       // ),
-                      child: VlcPlayer(
-                        controller: _videoPlayerController,
-                        aspectRatio: 16/9,
-                        placeholder: Center(child: CircularProgressIndicator(),),
-                      ),
+                      child: MyMjpeg(
+                        isLive: true,
+                        error: (context, error, stack) {
+                          print(error);
+                          print(stack);
+                          return Text(error.toString(), style: TextStyle(color: Colors.red));
+                        },
+                        stream: 'http://100.70.161.222:1024/video',
+                        takePicture: takePicture,
+                      )
                     ),
                   ),
                   Expanded(
@@ -165,6 +199,19 @@ class _InOutScreenState extends State<InOutScreen> {
                             bottomLeft: Radius.circular(10),
                             bottomRight: Radius.circular(10)
                         ),
+                      ),
+                      child: MaterialButton(
+                        onPressed: (){
+                          takePicture = !takePicture;
+
+                          File('my_image.jpg').writeAsBytes(GlobalData.image.bytes);
+                          image = File('my_image.jpg');
+                          // performImageLabeling();
+                          parsethetext();
+                          setState(() {
+
+                          });
+                        },
                       ),
                     ),
                   )
@@ -179,11 +226,11 @@ class _InOutScreenState extends State<InOutScreen> {
                   border: Border.all(width: 1),
                   borderRadius: BorderRadius.circular(10)
               ),
-              child: Column(),
             ),
           ],
         ),
       )
     );
   }
+
 }
