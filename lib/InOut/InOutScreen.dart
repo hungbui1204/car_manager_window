@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:get/get.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
@@ -10,6 +11,27 @@ class InOutScreen extends StatefulWidget {
 }
 
 class _InOutScreenState extends State<InOutScreen> {
+  late VlcPlayerController _videoPlayerController;
+  Future<void> initializePlayer() async {}
+
+  @override
+  void initState() {
+    super.initState();
+    initializePlayer();
+    _videoPlayerController = VlcPlayerController.network(
+      'https://21.193.1.9:8081/video',
+      hwAcc: HwAcc.full,
+      autoPlay: true,
+      options: VlcPlayerOptions(),
+    );
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await _videoPlayerController.stopRendererScanning();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -123,7 +145,14 @@ class _InOutScreenState extends State<InOutScreen> {
                           topLeft: Radius.circular(10),
                           topRight: Radius.circular(10)
                         ),
-                        color: Colors.blueAccent,
+                      ),
+                      // child: Image(
+                      //   image: NetworkImage("https://192.168.32.69:8080"),
+                      // ),
+                      child: VlcPlayer(
+                        controller: _videoPlayerController,
+                        aspectRatio: 16/9,
+                        placeholder: Center(child: CircularProgressIndicator(),),
                       ),
                     ),
                   ),
