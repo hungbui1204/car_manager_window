@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:firedart/firedart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../data/global_data.dart';
+const apiKey = 'AIzaSyCdnTfbryr5lxHakHyEcvnBx6CHdGye5-E';
+const projectId = 'flutter-car-manager-mobile';
 
 typedef ParseText = Function();
 
@@ -35,11 +39,39 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
   //   widget.takePicture = false;
   // }
   bool recognize = false;
+  String id ='';
+  String name = '';
+  String time_in = '';
+  String type = '';
+
+
+  String GetDateTime(){
+    DateTime date = DateTime.now();
+    String dateformat = DateFormat('HH:mm:ss dd/M/yy').format(date);
+    return dateformat;
+  }
+
+  Future GetData(String plate) async{
+    var firestore = Firestore(projectId);
+    var ref = await firestore.collection('user_data').where('number', isEqualTo: plate).get();
+    var data = await firestore.document(ref.first.path).get();
+    id = data['id'];
+    name = data['name'];
+    time_in = GetDateTime();
+
+    type = data['type'];
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     if (recognize){
       recognize = (widget.plate != '') ? false : true;
+      if (widget.plate!=''){
+        GetData(widget.plate);
+      }
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -54,11 +86,11 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
               child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              detail("Mã thẻ", "XXXXXXXXX"),
-              detail("Chủ sở hữu", "Đinh Đức Lương"),
+              detail("Mã thẻ", "$id"),
+              detail("Chủ sở hữu", "$name"),
               detail("Biển số", widget.plate ?? ""),
-              detail("Loại xe", "WaveA"),
-              detail("Thời gian ${widget.mode}", "XX/XX/XXXX")
+              detail("Loại xe", "$type"),
+              detail("Thời gian ${widget.mode}", "$time_in")
             ],
           )),
           const SizedBox(

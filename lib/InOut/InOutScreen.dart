@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
+import 'package:firedart/firedart.dart';
+
+
 
 class InOutScreen extends StatefulWidget {
   const InOutScreen({Key? key}) : super(key: key);
@@ -62,10 +65,13 @@ class _InOutScreenState extends State<InOutScreen> {
     var post = await http.post(Uri.parse(url), body: payload, headers: header);
     var result = jsonDecode(post.body);
     setState(() {
-      parsedtext = result['ParsedResults'][0]['ParsedText'];
-      parsedtext = parsedtext.replaceAll("\n", ' ');
-      parsedtext = parsedtext.replaceAll("\r", "");
-      print(parsedtext);
+      // parsedtext = result['ParsedResults'][0]['ParsedText'];
+      // parsedtext = parsedtext.replaceAll("\n", ' ');
+      // parsedtext = parsedtext.replaceAll("\r", "");
+      // print(parsedtext);
+
+      //Test use firestore get data
+      parsedtext = "61S2-6051";
     });
   }
 
@@ -74,6 +80,7 @@ class _InOutScreenState extends State<InOutScreen> {
     // TODO: implement dispose
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
