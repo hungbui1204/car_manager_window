@@ -21,7 +21,7 @@ class InOutScreen extends StatefulWidget {
 class _InOutScreenState extends State<InOutScreen> {
   String result = '';
   bool takePicture = false;
-  File? image;
+  File? image ;
 
   // Another option which doesn't work as expected is commented.
 
@@ -52,6 +52,9 @@ class _InOutScreenState extends State<InOutScreen> {
   String parsedtext = '';
   parsethetext() async {
     var bytes = GlobalData.image.bytes;
+    // parsedtext = '';
+    // var bytes = File("assets/train_text_recognize/13.jpg").readAsBytesSync();
+
     String img64 = base64Encode(bytes);
     var url = 'https://api.ocr.space/parse/image';
     var payload = {"base64Image": "data:image/jpg;base64,${img64.toString()}"};
@@ -60,6 +63,8 @@ class _InOutScreenState extends State<InOutScreen> {
     var result = jsonDecode(post.body);
     setState(() {
       parsedtext = result['ParsedResults'][0]['ParsedText'];
+      parsedtext = parsedtext.replaceAll("\n", ' ');
+      parsedtext = parsedtext.replaceAll("\r", "");
       print(parsedtext);
     });
   }
@@ -225,8 +230,8 @@ class _InOutScreenState extends State<InOutScreen> {
                         screenWidth: screenWidth,
                         screenHeight: screenHeight,
                         parseTheText: parsethetext,
-                        image: image,
                         mode: "vào",
+                        plate: parsedtext,
                       ),
                     )
                   ],
@@ -269,8 +274,8 @@ class _InOutScreenState extends State<InOutScreen> {
                         screenWidth: screenWidth,
                         screenHeight: screenHeight,
                         parseTheText: parsethetext,
-                        image: image,
                         mode: "ra",
+                        plate: parsedtext,
                       ),
                     )
                   ],
