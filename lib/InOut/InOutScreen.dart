@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:car_manager_window/items/detail_inout.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:car_manager_window/InOut/preprocessor_frame.dart';
 import 'package:car_manager_window/data/global_data.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
+
 class InOutScreen extends StatefulWidget {
   const InOutScreen({Key? key}) : super(key: key);
 
@@ -53,12 +56,18 @@ class _InOutScreenState extends State<InOutScreen> {
     var url = 'https://api.ocr.space/parse/image';
     var payload = {"base64Image": "data:image/jpg;base64,${img64.toString()}"};
     var header = {"apikey": "K85183784788957"};
-    var post = await http.post(Uri.parse(url),body: payload,headers: header);
+    var post = await http.post(Uri.parse(url), body: payload, headers: header);
     var result = jsonDecode(post.body);
     setState(() {
       parsedtext = result['ParsedResults'][0]['ParsedText'];
       print(parsedtext);
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -69,12 +78,15 @@ class _InOutScreenState extends State<InOutScreen> {
         value: item,
         child: Row(
           children: [
-            Icon(item.icon,color: Colors.black,),
+            Icon(
+              item.icon,
+              color: Colors.black,
+            ),
             Text(item.text),
           ],
         ));
-    void systemOnSelected(BuildContext context, MenuItemm item){
-      switch (item){
+    void systemOnSelected(BuildContext context, MenuItemm item) {
+      switch (item) {
         case MenuItems.itemSettings:
           Get.toNamed('/setting');
           break;
@@ -84,8 +96,9 @@ class _InOutScreenState extends State<InOutScreen> {
           break;
       }
     }
-    void managerOnSelected(BuildContext context, MenuItemm item){
-      switch (item){
+
+    void managerOnSelected(BuildContext context, MenuItemm item) {
+      switch (item) {
         case MenuItems.itemInOut:
           break;
         case MenuItems.itemResidentCard:
@@ -94,143 +107,177 @@ class _InOutScreenState extends State<InOutScreen> {
           break;
       }
     }
+
     return Scaffold(
-      appBar: AppBar(
-          toolbarHeight: 80,
-          backgroundColor: const Color.fromARGB(255, 5,194,204),
-          actions:[
-            Row(
-              children: [
-                const SizedBox(width: 20,),
-                SizedBox(
-                    height: 60,
-                    width: 100,
-                    child: TextButton(
-                      onPressed: (){
-                        Get.offAllNamed('/home');
-                      },
-                      style: OutlinedButton.styleFrom(),
-                      child: Text('Home',style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.normal),),
-                    )
-                ),
-                SizedBox(
-                    height: 60,
-                    width: 200,
-                    child: PopupMenuButton<MenuItemm>(
-                      child: const Center(child: Text('In/Out Manager', style: TextStyle(fontSize: 22),)),
-                      onSelected: (item)=>managerOnSelected(context, item),
-                      itemBuilder: (context)=>[
-                        ...MenuItems.itemInOutManager.map(buildItem).toList(),
-                      ],
-                    )
-                ),
-                SizedBox(
-                    height: 60,
-                    width: 220,
-                    child: TextButton(onPressed: (){},
-                      style: OutlinedButton.styleFrom(
-
-                      ),
-                      child: Text('Statistic & Report',style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.normal),),
-                    )
-                ),
-                SizedBox(
-                    height: 60,
-                    width: 140,
-                    child: PopupMenuButton<MenuItemm>(
-                      child: const Center(child: Text('System', style: TextStyle(fontSize: 22),)),
-                      onSelected: (item)=>systemOnSelected(context, item),
-                      itemBuilder: (context)=>[
-                        ...MenuItems.itemSystem.map(buildItem).toList(),
-                      ],
-                    )
-                ),
-
-              ],
-            ),
-            const Expanded(child: SizedBox()),
-          ]
-      ),
-      body: Container(
-        margin: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
-        child: Row(
-          children: [
-            Container(
-              height: screenHeight,
-              width: screenWidth*0.48,
-              decoration: BoxDecoration(
-                border: Border.all(width: 1),
-                borderRadius: BorderRadius.circular(10)
-              ),
-              child: Column(
+        appBar: AppBar(
+            toolbarHeight: 80,
+            backgroundColor: const Color.fromARGB(255, 5, 194, 204),
+            actions: [
+              Row(
                 children: [
-                  Expanded(
-                    flex: 5,
-                    child: Container(
-                      height: screenHeight*0.6,
-                      width: screenWidth*0.48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)
-                        ),
-                      ),
-                      // child: Image(
-                      //   image: NetworkImage("https://192.168.32.69:8080"),
-                      // ),
-                      child: MyMjpeg(
-                        isLive: true,
-                        error: (context, error, stack) {
-                          print(error);
-                          print(stack);
-                          return Text(error.toString(), style: TextStyle(color: Colors.red));
-                        },
-                        stream: 'http://100.70.161.222:1024/video',
-                        takePicture: takePicture,
-                      )
-                    ),
+                  const SizedBox(
+                    width: 20,
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      width: screenWidth*0.48,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(10),
-                            bottomRight: Radius.circular(10)
-                        ),
-                      ),
-                      child: MaterialButton(
-                        onPressed: (){
-                          takePicture = !takePicture;
-
-                          File('my_image.jpg').writeAsBytes(GlobalData.image.bytes);
-                          image = File('my_image.jpg');
-                          // performImageLabeling();
-                          parsethetext();
-                          setState(() {
-
-                          });
+                  SizedBox(
+                      height: 60,
+                      width: 100,
+                      child: TextButton(
+                        onPressed: () {
+                          Get.offAllNamed('/home');
                         },
-                      ),
-                    ),
-                  )
+                        style: OutlinedButton.styleFrom(),
+                        child: const Text(
+                          'Home',
+                          style: TextStyle(
+                              fontSize: 22,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal),
+                        ),
+                      )),
+                  SizedBox(
+                      height: 60,
+                      width: 200,
+                      child: PopupMenuButton<MenuItemm>(
+                        child: const Center(
+                            child: Text(
+                          'In/Out Manager',
+                          style: TextStyle(fontSize: 22),
+                        )),
+                        onSelected: (item) => managerOnSelected(context, item),
+                        itemBuilder: (context) => [
+                          ...MenuItems.itemInOutManager.map(buildItem).toList(),
+                        ],
+                      )),
+                  SizedBox(
+                      height: 60,
+                      width: 220,
+                      child: TextButton(
+                        onPressed: () {},
+                        style: OutlinedButton.styleFrom(),
+                        child: const Text(
+                          'Statistic & Report',
+                          style: TextStyle(
+                              fontSize: 22,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal),
+                        ),
+                      )),
+                  SizedBox(
+                      height: 60,
+                      width: 140,
+                      child: PopupMenuButton<MenuItemm>(
+                        child: const Center(
+                            child: Text(
+                          'System',
+                          style: TextStyle(fontSize: 22),
+                        )),
+                        onSelected: (item) => systemOnSelected(context, item),
+                        itemBuilder: (context) => [
+                          ...MenuItems.itemSystem.map(buildItem).toList(),
+                        ],
+                      )),
                 ],
               ),
-            ),
-            const Expanded(child: SizedBox()),
-            Container(
-              height: screenHeight,
-              width: screenWidth*0.48,
-              decoration: BoxDecoration(
-                  border: Border.all(width: 1),
-                  borderRadius: BorderRadius.circular(10)
+              const Expanded(child: SizedBox()),
+            ]),
+        body: Container(
+          margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(bottom: 30),
+                height: screenHeight,
+                width: screenWidth * 0.48,
+                decoration: BoxDecoration(
+                    border: Border.all(width: 1),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 7,
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                          height: screenHeight * 0.6,
+                          width: screenWidth * 0.48,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10)),
+                          ),
+                          // child: Image(
+                          //   image: NetworkImage("https://192.168.32.69:8080"),
+                          // ),
+                          child: MyMjpeg(
+                            isLive: true,
+                            
+                            fit: BoxFit.cover,
+                            error: (context, error, stack) {
+                              return Text(error.toString(),
+                                  style: const TextStyle(color: Colors.red));
+                            },
+                            stream: 'http://10.15.223.205:1024/video',
+                            takePicture: takePicture,
+                          )),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: DetailInOutWidget(
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
+                        parseTheText: parsethetext,
+                        image: image,
+                        mode: "vào",
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      )
-    );
+              const Expanded(child: SizedBox()),
+              Container(
+                padding: const EdgeInsets.only(bottom: 30),
+                height: screenHeight,
+                width: screenWidth * 0.48,
+                decoration: BoxDecoration(
+                    border: Border.all(width: 1),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 7,
+                      child: Container(
+                          height: screenHeight * 0.6,
+                          width: screenWidth * 0.48,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10)),
+                          ),
+                          // child: MyMjpeg(
+                          //   isLive: true,
+                          //   error: (context, error, stack) {
+                          //     return Text(error.toString(),
+                          //         style: const TextStyle(color: Colors.red));
+                          //   },
+                          //   stream: 'http://10.15.223.205:1024/video',
+                          //   takePicture: takePicture,
+                          // )
+                        ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: DetailInOutWidget(
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
+                        parseTheText: parsethetext,
+                        image: image,
+                        mode: "ra",
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
   }
-
 }
