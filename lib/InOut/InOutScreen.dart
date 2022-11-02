@@ -54,9 +54,9 @@ class _InOutScreenState extends State<InOutScreen> {
 
   String parsedtext = '';
   parsethetext() async {
-    var bytes = GlobalData.image.bytes;
-    // parsedtext = '';
-    // var bytes = File("assets/train_text_recognize/13.jpg").readAsBytesSync();
+    // var bytes = GlobalData.image.bytes;
+    parsedtext = '';
+    var bytes = File("assets/train_text_recognize/13.jpg").readAsBytesSync();
 
     String img64 = base64Encode(bytes);
     var url = 'https://api.ocr.space/parse/image';

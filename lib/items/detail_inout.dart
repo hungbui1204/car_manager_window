@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:firedart/firedart.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_dart/firebase_dart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -44,26 +45,76 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
   String time_in = '';
   String type = '';
 
+  ImportImageFirebaseStorage(String path, String name) async{
+    // FirebaseDart.setup();
+    // var app = await Firebase.initializeApp(
+    //     options: const FirebaseOptions(
+    //         appId: '1:387750916082:web:01ee70eff0036b9289056b',
+    //         apiKey: 'AIzaSyCdnTfbryr5lxHakHyEcvnBx6CHdGye5-E',
+    //         projectId: 'flutter-car-manager-mobile',
+    //         messagingSenderId: '387750916082',
+    //         authDomain: 'flutter-car-manager-mobile.firebaseapp.com',
+    //         storageBucket: 'flutter-car-manager-mobile.appspot.com')
+    // );
+    var storage = FirebaseStorage.instance;
+    File pic = File("assets/train_text_recognize/1.jpg");
+    Uint8List picU = await pic.readAsBytes();
+    var ref = storage.ref().child('$path/$name.jpg');
+    await ref.putData(picU);
+  }
+
 
   String GetDateTime(){
     DateTime date = DateTime.now();
-    String dateformat = DateFormat('HH:mm:ss dd/M/yy').format(date);
+    String dateformat = DateFormat('HH:mm:ss dd-M-yy').format(date);
     return dateformat;
   }
 
+  List<String> HistoryParking(List data){
+    List<String> history = [];
+    data.forEach((element) {
+      history.add(element);
+    });
+    return history;
+  }
+
   Future GetData(String plate) async{
+
     var firestore = Firestore(projectId);
     var ref = await firestore.collection('user_data').where('number', isEqualTo: plate).get();
     var data = await firestore.document(ref.first.path).get();
+    var history = HistoryParking(data['history']);
     id = data['id'];
     name = data['name'];
     time_in = GetDateTime();
-
+    var time = widget.mode == "vào" ? "IN $time_in" : "OUT $time_in";
+    history.add(time);
+    firestore.document(ref.first.path).update(
+        {'history': history});
     type = data['type'];
+    ImportImageFirebaseStorage(ref.first.path, time);
     setState(() {
 
     });
   }
+
+  // void displaySuccessMotionToast() {
+  //   MotionToast.success(
+  //     title: const Text(
+  //       'Success',
+  //       style: TextStyle(fontWeight: FontWeight.bold),
+  //     ),
+  //     description: const Text(
+  //       'Login Successful',
+  //       style: TextStyle(fontSize: 12),
+  //     ),
+  //     width: 300,
+  //     height: 80,
+  //     position: MotionToastPosition.bottom,
+  //     animationType: AnimationType.fromBottom,
+  //     dismissable: true,
+  //   ).show(context);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +123,7 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
       if (widget.plate!=''){
         GetData(widget.plate);
       }
+
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -103,14 +155,15 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
               hoverColor: (widget.mode == "vào") ? Colors.green : Colors.red,
               onPressed: () async {
                 widget.plate = '';
+                id ='';
+                name = '';
+                time_in = '';
+                type = '';
                 // widget.takePicture = !widget.takePicture;
                 setState(() {
                   recognize = true;
                 });
-
                 File('my_image.jpg').writeAsBytes(GlobalData.image.bytes);
-                // widget.image = File('assets/train_text_recognize/2.jpg');
-                // performImageLabeling();
                 widget.parseTheText();
               },
               child: (!recognize) ? Text(
