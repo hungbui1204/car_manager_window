@@ -21,7 +21,7 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
   TextEditingController transportController = TextEditingController();
   bool search = false;
   Future<GuestDataSource> getGuestDataSource() async {
-    var guestList = await fetchGuestData();
+    var guestList = await getListGuestData();
     List<GuestData> guestSearch = [];
     for(var i in guestList){
       if(idController.value.text == i.id

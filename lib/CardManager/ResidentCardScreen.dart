@@ -18,7 +18,7 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
   TextEditingController transportController = TextEditingController();
   bool search = false;
   Future<ResidentDataSource> getResidentDataSource() async {
-    var residentList = await fetchResidentData();
+    var residentList = await getListResidentData();
     List<ResidentData> residentSearch = [];
     for(var i in residentList){
       if(idController.value.text == i.id
