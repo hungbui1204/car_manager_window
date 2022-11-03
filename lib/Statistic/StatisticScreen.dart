@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../API/sales_data_api.dart';
 import '../API/trans_amount_api.dart';
@@ -108,7 +109,7 @@ class _StatisticScreenState extends State<StatisticScreen> {
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
               child: FutureBuilder(
-                  future: fetchTransAmountData(),
+                  future: getTransQuantity(),
                   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
                     if(snapshot.hasData){
                       final data = snapshot.data as List<TransAmount>;
@@ -118,11 +119,11 @@ class _StatisticScreenState extends State<StatisticScreen> {
                           title: ChartTitle(text: 'Vehicle Quantity'),
                           //legend: Legend(isVisible: true),
                           tooltipBehavior: TooltipBehavior(enable: true),
-                          series: <ChartSeries<TransAmount, String>>[
-                            LineSeries<TransAmount, String>(
+                          series: <ChartSeries<TransAmount, dynamic>>[
+                            LineSeries<TransAmount, dynamic>(
                                 dataSource: data,
-                                xValueMapper: (TransAmount obj, _) => obj.day,
-                                yValueMapper: (TransAmount obj, _) => obj.amount,
+                                xValueMapper: (TransAmount obj, _) => DateFormat('dd-MM-yyyy').format(obj.date),
+                                yValueMapper: (TransAmount obj, _) => obj.quantity,
                                 color: Colors.greenAccent,
                                 name: 'Vehicle Quantity',
                                 dataLabelSettings: DataLabelSettings(isVisible: true)
@@ -146,7 +147,7 @@ class _StatisticScreenState extends State<StatisticScreen> {
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
               child: FutureBuilder(
-                  future: fetchSalesData(),
+                  future: getSalesData(),
                   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
                     if(snapshot.hasData){
                       final data = snapshot.data as List<SalesData>;
@@ -156,10 +157,10 @@ class _StatisticScreenState extends State<StatisticScreen> {
                           title: ChartTitle(text: 'Sales Data'),
                           //legend: Legend(isVisible: true),
                           tooltipBehavior: TooltipBehavior(enable: true),
-                          series: <ChartSeries<SalesData, String>>[
-                            ColumnSeries<SalesData, String>(
+                          series: <ChartSeries<SalesData, dynamic>>[
+                            ColumnSeries<SalesData, dynamic>(
                                 dataSource: data,
-                                xValueMapper: (SalesData obj, _) => obj.day,
+                                xValueMapper: (SalesData obj, _) => DateFormat('dd-MM-yyyy').format(obj.date),
                                 yValueMapper: (SalesData obj, _) => obj.sales,
                                 color: Colors.redAccent,
                                 name: 'Sales Data',

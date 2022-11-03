@@ -1,11 +1,11 @@
 class SalesData {
-  String? day;
+  DateTime date = DateTime.now();
   int? sales;
 
-  SalesData({this.day, this.sales});
+  SalesData({required this.date, this.sales});
 
   SalesData.fromJson(Map<String, dynamic> json) {
-    day = json['day'];
-    sales = json['sales'];
+    date = DateTime.parse(json['day'].toString());
+    sales = int.parse(json['sales'].toString());
   }
 }

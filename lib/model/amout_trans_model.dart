@@ -1,11 +1,14 @@
-class TransAmount {
-  String? day;
-  int? amount;
+import 'package:intl/intl.dart';
 
-  TransAmount({this.day, this.amount});
+class TransAmount {
+  DateTime date = DateTime.now();
+  int? quantity;
+
+  TransAmount({required this.date, this.quantity});
 
   TransAmount.fromJson(Map<String, dynamic> json) {
-    day = json['day'];
-    amount = json['amount'];
+    // day = json['day'];
+    date = DateTime.parse(json['day'].toString());
+    quantity = int.parse(json['quantity'].toString());
   }
 }

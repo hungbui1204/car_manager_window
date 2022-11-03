@@ -5,7 +5,7 @@ class ResidentData {
   String? name;
   String? type;
   String? number;
-  String? timeIn;
+  DateTime? timeIn;
 
   ResidentData({this.id, this.name, this.type, this.number, this.timeIn});
 
@@ -14,7 +14,7 @@ class ResidentData {
     name = json['name'];
     type = json['type'];
     number = json['number'];
-    timeIn = json['time_in'];
+    timeIn = DateTime.parse(json['time_in'].toString());
   }
 
   ResidentData.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc)

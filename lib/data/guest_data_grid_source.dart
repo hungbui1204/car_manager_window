@@ -56,7 +56,7 @@ class GuestDataSource extends DataGridSource{
             columnName: 'Transport Type', value: dataGridRow.type),
         DataGridCell<String>(
             columnName: 'Number', value: dataGridRow.number),
-        DataGridCell<String>(columnName: 'Time In', value: dataGridRow.timeIn)
+        DataGridCell<DateTime>(columnName: 'Time In', value: dataGridRow.timeIn)
       ]);
     }).toList(growable: false);
   }
