@@ -216,9 +216,6 @@ class _InOutScreenState extends State<InOutScreen> {
                                 topLeft: Radius.circular(10),
                                 topRight: Radius.circular(10)),
                           ),
-                          // child: Image(
-                          //   image: NetworkImage("https://192.168.32.69:8080"),
-                          // ),
                           child: MyMjpeg(
                             isLive: true,
                             

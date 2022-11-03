@@ -88,6 +88,7 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
     name = data['name'];
     time_in = GetDateTime();
     var time = widget.mode == "vào" ? "IN $time_in" : "OUT $time_in";
+    // var time = 'IN 00:00:00 10-10-22';
     history.add(time);
     firestore.document(ref.first.path).update(
         {'history': history});
