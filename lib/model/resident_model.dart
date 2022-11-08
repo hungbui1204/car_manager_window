@@ -5,9 +5,9 @@ class ResidentData {
   String? name;
   String? type;
   String? number;
-  DateTime? timeIn;
+  DateTime timeIn = DateTime.now();
 
-  ResidentData({this.id, this.name, this.type, this.number, this.timeIn});
+  ResidentData({this.id, this.name, this.type, this.number, required this.timeIn});
 
   ResidentData.fromJson(Map<String, dynamic> json) {
     id = json['id'];

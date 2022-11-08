@@ -6,7 +6,6 @@ import 'package:car_manager_window/API/resident_api.dart';
 
 class ResidentCardScreen extends StatefulWidget {
   const ResidentCardScreen({Key? key}) : super(key: key);
-
   @override
   State<ResidentCardScreen> createState() => _ResidentCardScreenState();
 }
@@ -17,8 +16,10 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController transportController = TextEditingController();
   bool search = false;
+  bool searchUpToDown = false;
+  bool searchDownToUp = false;
   Future<ResidentDataSource> getResidentDataSource() async {
-    var residentList = await getListResidentData();
+    var residentList = await getListResidentData(searchUpToDown, searchDownToUp);
     List<ResidentData> residentSearch = [];
     for(var i in residentList){
       if(idController.value.text == i.id
@@ -119,12 +120,16 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
             label: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.centerLeft,
-                child: const Text('ID',
-                    style: TextStyle(
-                        fontSize: 18, color: Color.fromARGB(255, 31,20,86),
-                        fontWeight: FontWeight.bold
-                    ),
-                    overflow: TextOverflow.clip, softWrap: true))),
+                child: Row(
+                  children: const [
+                    Text('ID',
+                        style: TextStyle(
+                            fontSize: 18, color: Color.fromARGB(255, 31,20,86),
+                            fontWeight: FontWeight.bold
+                        ),
+                        overflow: TextOverflow.clip, softWrap: true),
+                  ],
+                ))),
         GridColumn(
             columnName: 'User Name',
             width: screenWidth*0.2,
@@ -161,8 +166,24 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
             label: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.centerLeft,
-                child: const Text('Time In', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
-                    fontWeight: FontWeight.bold),)))
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Time In', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
+                        fontWeight: FontWeight.bold),),
+                    GestureDetector(
+                      child: Icon(searchUpToDown == false
+                          ? Icons.arrow_downward
+                          : Icons.arrow_upward,size: 17, color: const Color.fromARGB(255, 31,20,86),),
+                      onTap: (){
+                        setState(() {
+                          searchUpToDown = !searchUpToDown;
+                          searchDownToUp = !searchUpToDown;
+                        });
+                      },
+                    )
+                  ],
+                )))
       ];
     }
     return Scaffold(

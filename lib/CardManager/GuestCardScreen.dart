@@ -20,8 +20,10 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
   TextEditingController numberController = TextEditingController();
   TextEditingController transportController = TextEditingController();
   bool search = false;
+  bool searchUpToDown = false;
+  bool searchDownToUp = false;
   Future<GuestDataSource> getGuestDataSource() async {
-    var guestList = await getListGuestData();
+    var guestList = await getListGuestData(searchUpToDown, searchDownToUp);
     List<GuestData> guestSearch = [];
     for(var i in guestList){
       if(idController.value.text == i.id
@@ -107,8 +109,24 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
             label: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.centerLeft,
-                child: const Text('Time In', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
-                    fontWeight: FontWeight.bold),)))
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Time In', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
+                        fontWeight: FontWeight.bold),),
+                    GestureDetector(
+                      child: Icon(searchUpToDown == false
+                          ? Icons.arrow_downward
+                          : Icons.arrow_upward,size: 17, color: const Color.fromARGB(255, 31,20,86),),
+                      onTap: (){
+                        setState(() {
+                          searchUpToDown = !searchUpToDown;
+                          searchDownToUp = !searchUpToDown;
+                        });
+                      },
+                    )
+                  ],
+                )))
       ];
     }
     return Scaffold(
