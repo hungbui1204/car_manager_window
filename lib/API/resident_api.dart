@@ -46,13 +46,17 @@ Future <List<ResidentData>> getListResidentData(bool searchUpToDown, bool search
     list[i].history.last = '${DateFormat('dd/MM/yy HH:mm:ss').format(date)} ($state)';
     listDate.add(date);
   }
+  print(listDate);
   if(searchUpToDown == true && searchDownToUp == false){
     for (int step = 0; step < list.length; step++) {
       for (int i = 0; i < list.length - step - 1; i++) {
         if (listDate[i].isBefore(listDate[i+1])) {
-          var temp = list[i];
+          var temp1 = list[i];
           list[i] = list[i+1];
-          list[i+1] = temp;
+          list[i+1] = temp1;
+          var temp2 = listDate[i];
+          listDate[i] = listDate[i+1];
+          listDate[i+1] = temp2;
         }
       }
     }
@@ -60,9 +64,12 @@ Future <List<ResidentData>> getListResidentData(bool searchUpToDown, bool search
     for (int step = 0; step < list.length; step++) {
       for (int i = 0; i < list.length - step - 1; i++) {
         if (listDate[i].isAfter(listDate[i+1])) {
-          var temp = list[i];
+          var temp1 = list[i];
           list[i] = list[i+1];
-          list[i+1] = temp;
+          list[i+1] = temp1;
+          var temp2 = listDate[i];
+          listDate[i] = listDate[i+1];
+          listDate[i+1] = temp2;
         }
       }
     }
