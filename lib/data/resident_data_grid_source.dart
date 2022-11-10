@@ -65,7 +65,7 @@ class ResidentDataSource extends DataGridSource{
             columnName: 'Transport Type', value: dataGridRow.type),
         DataGridCell<String>(
             columnName: 'Number', value: dataGridRow.number),
-        DataGridCell<DateTime>(columnName: 'Time In', value: dataGridRow.timeIn)
+        DataGridCell<String>(columnName: 'Lasted History', value: dataGridRow.history.last)
       ]);
     }).toList(growable: false);
   }

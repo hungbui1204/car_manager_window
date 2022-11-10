@@ -52,6 +52,7 @@ dependencies:
   google_ml_vision: ^0.0.7
   intl: ^0.17.0
   firebase_dart: ^1.0.11
+  flutter_spinkit: ^5.1.0
 
   flutter_localizations:
     sdk: "flutter"

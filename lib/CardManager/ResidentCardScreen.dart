@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:car_manager_window/data/resident_data_grid_source.dart';
 import 'package:car_manager_window/API/resident_api.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ResidentCardScreen extends StatefulWidget {
   const ResidentCardScreen({Key? key}) : super(key: key);
@@ -161,7 +162,7 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
                         fontWeight: FontWeight.bold),
                     overflow: TextOverflow.clip, softWrap: true))),
         GridColumn(
-            columnName: 'Time In',
+            columnName: 'Lasted History',
             width: screenWidth*0.2,
             label: Container(
                 padding: const EdgeInsets.all(8),
@@ -169,7 +170,7 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Time In', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
+                    const Text('Lasted History', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
                         fontWeight: FontWeight.bold),),
                     GestureDetector(
                       child: Icon(searchUpToDown == false
@@ -297,8 +298,10 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
               return snapshot.hasData
               ? SfDataGrid(source: snapshot.data, columns: getColumns())
               : const Center(
-                    child: CircularProgressIndicator(
-                    strokeWidth: 3,),);}
+                    child: SpinKitThreeInOut(
+                      color: Color.fromARGB(255, 31,20,86),
+                      size: 50.0,
+                    ),);}
       )
     ));
   }

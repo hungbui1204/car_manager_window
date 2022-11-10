@@ -5,23 +5,23 @@ class ResidentData {
   String? name;
   String? type;
   String? number;
-  DateTime timeIn = DateTime.now();
+  List history = [];
 
-  ResidentData({this.id, this.name, this.type, this.number, required this.timeIn});
+  ResidentData({this.id, this.name, this.type, this.number, required this.history});
 
   ResidentData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     type = json['type'];
     number = json['number'];
-    timeIn = DateTime.parse(json['time_in'].toString());
+    history = json['history'];
   }
 
-  ResidentData.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc)
-      : id = doc.id,
-        name = doc.data()!["name"],
-        type = doc.data()!["type"],
-        number = doc.data()!["number"],
-        timeIn = doc.data()!["time_in"];
-}
+//   ResidentData.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> doc)
+//       : id = doc.id,
+//         name = doc.data()!["name"],
+//         type = doc.data()!["type"],
+//         number = doc.data()!["number"],
+//         timeIn = doc.data()!["time_in"];
+ }
 
