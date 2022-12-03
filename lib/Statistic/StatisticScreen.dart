@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -98,83 +99,112 @@ class _StatisticScreenState extends State<StatisticScreen> {
             const Expanded(child: SizedBox()),
           ]
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Container(
-              height: screenHeight*0.4,
-              width: screenWidth - 20,
-              margin: const EdgeInsets.fromLTRB(10, 30, 0, 0),
-              decoration: BoxDecoration(
-                border: Border.all(width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
+          Image.asset('assets/images/background3.jpg'),
+          Column(
+            children: [
+              Container(
+                  height: screenHeight*0.4,
+                  width: screenWidth - 20,
+                  margin: const EdgeInsets.fromLTRB(10, 30, 0, 0),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: FutureBuilder(
+                      future: getTransQuantity(),
+                      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
+                        if(snapshot.hasData){
+                          final data = snapshot.data as List<TransAmount>;
+                          return SfCartesianChart(
+                              primaryXAxis: CategoryAxis(),
+                              // Chart title
+                              title: ChartTitle(text: 'Vehicle Quantity'),
+                              //legend: Legend(isVisible: true),
+                              tooltipBehavior: TooltipBehavior(enable: true),
+                              series: <ChartSeries<TransAmount, dynamic>>[
+                                LineSeries<TransAmount, dynamic>(
+                                    dataSource: data,
+                                    xValueMapper: (TransAmount obj, _) => DateFormat('dd-MM-yyyy').format(obj.date),
+                                    yValueMapper: (TransAmount obj, _) => obj.quantity,
+                                    color: Colors.greenAccent,
+                                    name: 'Vehicle Quantity',
+                                    dataLabelSettings: DataLabelSettings(isVisible: true)
+                                )]
+                          );
+                        }else if(snapshot.hasError){
+                          return const Center(child: Text('Data Error'));
+                        }else{
+                          return Center(
+                            child: SpinKitChasingDots(
+                              itemBuilder: (BuildContext context, int index) {
+                                return DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: index.isEven
+                                        ? const Color.fromARGB(255, 31,20,86)
+                                        : const Color.fromARGB(255, 5,194,204),
+                                  ),
+                                );
+                              },
+                              //color: Color.fromARGB(255, 31,20,86),
+                              size: 50.0,
+                            ),);
+                        }}
+                  )
               ),
-              child: FutureBuilder(
-                  future: getTransQuantity(),
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
-                    if(snapshot.hasData){
-                      final data = snapshot.data as List<TransAmount>;
-                      return SfCartesianChart(
-                          primaryXAxis: CategoryAxis(),
-                          // Chart title
-                          title: ChartTitle(text: 'Vehicle Quantity'),
-                          //legend: Legend(isVisible: true),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          series: <ChartSeries<TransAmount, dynamic>>[
-                            LineSeries<TransAmount, dynamic>(
-                                dataSource: data,
-                                xValueMapper: (TransAmount obj, _) => DateFormat('dd-MM-yyyy').format(obj.date),
-                                yValueMapper: (TransAmount obj, _) => obj.quantity,
-                                color: Colors.greenAccent,
-                                name: 'Vehicle Quantity',
-                                dataLabelSettings: DataLabelSettings(isVisible: true)
-                            )]
-                      );
-                    }else if(snapshot.hasError){
-                      return const Center(child: Text('Data Error'));
-                    }else{
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,),);
-                    }}
-              )
-          ),
-          Container(
-              height: screenHeight*0.4,
-              width: screenWidth - 20,
-              margin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-              decoration: BoxDecoration(
-                border: Border.all(width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              Container(
+                  height: screenHeight*0.4,
+                  width: screenWidth - 20,
+                  margin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: FutureBuilder(
+                      future: getSalesData(),
+                      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
+                        if(snapshot.hasData){
+                          final data = snapshot.data as List<SalesData>;
+                          return SfCartesianChart(
+                              primaryXAxis: CategoryAxis(),
+                              // Chart title
+                              title: ChartTitle(text: 'Sales Data'),
+                              //legend: Legend(isVisible: true),
+                              tooltipBehavior: TooltipBehavior(enable: true),
+                              series: <ChartSeries<SalesData, dynamic>>[
+                                ColumnSeries<SalesData, dynamic>(
+                                    dataSource: data,
+                                    xValueMapper: (SalesData obj, _) => DateFormat('dd-MM-yyyy').format(obj.date),
+                                    yValueMapper: (SalesData obj, _) => obj.sales,
+                                    color: Colors.redAccent,
+                                    name: 'Sales Data',
+                                    dataLabelSettings: DataLabelSettings(isVisible: true)
+                                )]
+                          );
+                        }else if(snapshot.hasError){
+                          return const Center(child: Text('Data Error'));
+                        }else{
+                          return Center(
+                            child: SpinKitChasingDots(
+                              itemBuilder: (BuildContext context, int index) {
+                                return DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: index.isEven
+                                        ? const Color.fromARGB(255, 31,20,86)
+                                        : const Color.fromARGB(255, 5,194,204),
+                                  ),
+                                );
+                              },
+                              //color: Color.fromARGB(255, 31,20,86),
+                              size: 50.0,
+                            ),);
+                        }}
+                  )
               ),
-              child: FutureBuilder(
-                  future: getSalesData(),
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
-                    if(snapshot.hasData){
-                      final data = snapshot.data as List<SalesData>;
-                      return SfCartesianChart(
-                          primaryXAxis: CategoryAxis(),
-                          // Chart title
-                          title: ChartTitle(text: 'Sales Data'),
-                          //legend: Legend(isVisible: true),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          series: <ChartSeries<SalesData, dynamic>>[
-                            ColumnSeries<SalesData, dynamic>(
-                                dataSource: data,
-                                xValueMapper: (SalesData obj, _) => DateFormat('dd-MM-yyyy').format(obj.date),
-                                yValueMapper: (SalesData obj, _) => obj.sales,
-                                color: Colors.redAccent,
-                                name: 'Sales Data',
-                                dataLabelSettings: DataLabelSettings(isVisible: true)
-                            )]
-                      );
-                    }else if(snapshot.hasError){
-                      return const Center(child: Text('Data Error'));
-                    }else{
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,),);
-                    }}
-              )
+            ],
           ),
         ],
       )

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:scroll_loop_auto_scroll/scroll_loop_auto_scroll.dart';
+import 'package:text_scroll/text_scroll.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
 class HomeScreen extends StatefulWidget {
@@ -100,38 +102,156 @@ class _HomeScreenState extends State<HomeScreen> {
             width: screenWidth,
             color: Colors.white,
           ),
-          Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Image.asset('assets/images/background3.jpg'),
+          Column(
             children: [
-              Expanded(
-                flex: 2,
-                child: Column(
+              Text('Home', style: TextStyle(
+                color: const Color.fromARGB(255, 5,194,204),
+                fontSize: 40,
+                fontWeight: FontWeight.bold
+              ),),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Stack(
                       children: [
                         Container(
-                          height: 100,
-                          color: const Color.fromARGB(255, 5,194,204),
+                          width: screenWidth*0.25,
+                          height: screenHeight*0.75,
+                          margin: EdgeInsets.only(left: 9),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              color: Color.fromARGB(255, 255,255,255)
+                          ),
+                          child: Image.asset('assets/images/instruction.jpg'),
                         ),
-                         Container(
-                           padding: const EdgeInsets.only(top: 25),
-                            alignment: Alignment.center,
-                            child: const Text('HOME',
-                            style: TextStyle(
-                              fontSize: 35,
-                              color: Colors.white
-                            ),
-                            )),
+                        TextButton(onPressed: (){}, child: Container(
+                          width: screenWidth*0.25,
+                          height: screenHeight*0.75,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              color: const Color.fromARGB(120, 0,0,0)
+                          ),
+                          child: Center(
+                            child: Text('HOW TO USE THIS APP? JUST CLICK HERE!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color.fromARGB(220, 255, 255, 255),
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),),
+                          ),
+                        ),),
                       ],
                     ),
+                    Stack(
+                      children: [
+                        Container(
+                          width: screenWidth*0.25,
+                          height: screenHeight*0.75,
+                          margin: EdgeInsets.only(left: 9),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              color: Color.fromARGB(255, 255,255,255)
+                          ),
+                          child: Image.asset('assets/images/customer_care.jpg'),
+                        ),
+                        TextButton(onPressed: (){}, child: Container(
+                          width: screenWidth*0.25,
+                          height: screenHeight*0.75,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              color: const Color.fromARGB(120, 0,0,0)
+                          ),
+                          child: Center(
+                            child: Text('ABOUT CUSTOMER CARE',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color.fromARGB(220, 255, 255, 255),
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),),
+                          ),
+                        ),),
+                      ],
+                    ),
+                    Stack(
+                      children: [
+                        Container(
+                          width: screenWidth*0.25,
+                          height: screenHeight*0.75,
+                          margin: EdgeInsets.only(left: 9),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              color: Color.fromARGB(255, 255,255,255)
+                          ),
+                          child: Image.asset('assets/images/update.jpg'),
+                        ),
+                        TextButton(onPressed: (){}, child: Container(
+                          width: screenWidth*0.25,
+                          height: screenHeight*0.75,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              color: const Color.fromARGB(120, 0,0,0)
+                          ),
+                          child: Center(
+                            child: Text('NEW FEATURES IN THE NEXT UPDATE!!!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color.fromARGB(220, 255, 255, 255),
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),),
+                          ),
+                        ),),
+                      ],
+                    ),
+                    // Expanded(
+                    //   flex: 2,
+                    //   child: Column(
+                    //     children: [
+                    //       Stack(
+                    //         children: [
+                    //           Container(
+                    //             height: 100,
+                    //             color: const Color.fromARGB(255, 5,194,204),
+                    //           ),
+                    //            Container(
+                    //              padding: const EdgeInsets.only(top: 25),
+                    //               alignment: Alignment.center,
+                    //               child: const Text('HOME',
+                    //               style: TextStyle(
+                    //                 fontSize: 35,
+                    //                 color: Colors.white
+                    //               ),
+                    //               )),
+                    //         ],
+                    //       ),
+                    //     ],
+                    //   )
+                    // ),
+                    // Expanded(
+                    //     flex: 5,
+                    //     child: Image.asset('assets/images/background1.jpg'))
                   ],
-                )
+                ),
               ),
-              Expanded(
-                  flex: 5,
-                  child: Image.asset('assets/images/background1.jpg'))
             ],
           ),
+          // ScrollLoopAutoScroll(
+          //   scrollDirection: Axis.horizontal,
+          //   child: Row(
+          //     children: [
+          //       Image.asset('assets/images/speaker.png',scale: 10,),
+          //       const SizedBox(width: 10,),
+          //       const Text(
+          //         'Important notification: We will have a big card system update next month, please inform to our resident as soon as possible!!!',
+          //         style: TextStyle(fontSize: 20),
+          //       )
+          //     ],
+          //   ),
+          // ),
         ],
       )
     );
