@@ -8,7 +8,7 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:get/get.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
-import 'package:google_vision/google_vision.dart';
+// import 'package:google_vision/google_vision.dart';
 import 'package:firedart/firedart.dart';
 
 class InOutScreen extends StatefulWidget {
@@ -54,7 +54,7 @@ class _InOutScreenState extends State<InOutScreen> {
     // var bytes = GlobalData.image.bytes;
     // final googleVision = await GoogleVision.withJwt('my_jwt_credentials.json');
     parsedtext = '';
-    var bytes = File('./assets/train_text_recognize/1.jpg').readAsBytesSync();
+    var bytes = File('./assets/train_text_recognize/8.jpg').readAsBytesSync();
 
     String img64 = base64Encode(bytes);
 
@@ -106,19 +106,36 @@ class _InOutScreenState extends State<InOutScreen> {
 //output the results as a new image file
 //     await bytes.writeAsJpeg('resulting_image.jpg');
 
+    // print(img64);
     var url = 'https://api.ocr.space/parse/image';
-    var payload = {"base64Image": "data:image/jpg;base64,${img64.toString()}"};
+    var payload = {"base64Image": "data:image/jpg;base64,${img64.toString()}", "ocrengine" : "2"};
     var header = {"apikey": "K85183784788957"};
     var post = await http.post(Uri.parse(url), body: payload, headers: header);
     var result = jsonDecode(post.body);
     setState(() {
+      // print(result['ParsedResults'][0]['ParsedText']);
       parsedtext = result['ParsedResults'][0]['ParsedText'];
       parsedtext = parsedtext.replaceAll("\n", ' ');
       parsedtext = parsedtext.replaceAll("\r", "");
+      var finalPlate = '';
       print(parsedtext);
+      for (var i =0; i< parsedtext.length; i++){
+        if(parsedtext[i].isNum){
+          finalPlate = parsedtext.substring(i, i+10);
+          while (!finalPlate[finalPlate.length -1].isNum){
+            finalPlate = finalPlate.substring(0, finalPlate.length -2);
+          }
+          break;
+        }
+        else
+        print('hmmm');
+      }
+
+      parsedtext = finalPlate;
+      // print(parsedtext);
 
       //Test use firestore get data
-      parsedtext = "61S2-6051";
+      // parsedtext = "61S2-6051";
     });
   }
 
@@ -269,7 +286,7 @@ class _InOutScreenState extends State<InOutScreen> {
                               return Text(error.toString(),
                                   style: const TextStyle(color: Colors.red));
                             },
-                            stream: 'http://192.168.1.198:1024/video',
+                            stream: 'http://11.93.103.218:1024/video',
                             takePicture: takePicture,
                           )),
                     ),

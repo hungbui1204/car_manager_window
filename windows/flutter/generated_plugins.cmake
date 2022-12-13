@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   screen_retriever
+  tflite_flutter_helper
   window_manager
 )
 

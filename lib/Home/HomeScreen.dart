@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scroll_loop_auto_scroll/scroll_loop_auto_scroll.dart';
-import 'package:text_scroll/text_scroll.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
 class HomeScreen extends StatefulWidget {
