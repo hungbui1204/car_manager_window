@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ).show(context);
   }
   Future<void> getAccount() async{
-    var accountList = await fetchAccountData();
+    var accountList = await getAccountData();
     for(int i = 0; i < accountList.length; i++){
       if(accountList[i].user == userController.value.text && accountList[i].password == passwordController.value.text){
         Get.offAllNamed('/home');

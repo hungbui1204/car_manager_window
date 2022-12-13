@@ -1,11 +1,8 @@
 import 'package:car_manager_window/API/guest_api.dart';
 import 'package:car_manager_window/model/guest_model.dart';
-import 'package:car_manager_window/model/resident_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:car_manager_window/data/resident_data_grid_source.dart';
-import 'package:car_manager_window/API/resident_api.dart';
-
 import '../data/guest_data_grid_source.dart';
 
 class GuestCardScreen extends StatefulWidget {
@@ -223,9 +220,19 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
                 builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
                   return snapshot.hasData
                       ? SfDataGrid(source: snapshot.data, columns: getColumns())
-                      : const Center(
-                          child: CircularProgressIndicator(
-                      strokeWidth: 3,),);}
+                      : Center(
+                          child: SpinKitThreeInOut(
+                            itemBuilder: (BuildContext context, int index) {
+                              return DecoratedBox(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: index.isEven ? Color.fromARGB(255, 31,20,86) : Color.fromARGB(255, 5,194,204),
+                                ),
+                              );
+                            },
+                            //color: Color.fromARGB(255, 31,20,86),
+                            size: 50.0,
+                          ),);}
             )
         ));
   }

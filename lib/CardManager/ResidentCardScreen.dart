@@ -297,9 +297,19 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
               return snapshot.hasData
               ? SfDataGrid(source: snapshot.data, columns: getColumns())
-              : const Center(
+              : Center(
                     child: SpinKitThreeInOut(
-                      color: Color.fromARGB(255, 31,20,86),
+                      itemBuilder: (BuildContext context, int index) {
+                        return DecoratedBox(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: index.isEven
+                                ? const Color.fromARGB(255, 31,20,86)
+                                : const Color.fromARGB(255, 5,194,204),
+                          ),
+                        );
+                      },
+                      //color: Color.fromARGB(255, 31,20,86),
                       size: 50.0,
                     ),);}
       )
