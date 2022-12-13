@@ -1,18 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:car_manager_window/items/detail_inout.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:car_manager_window/InOut/preprocessor_frame.dart';
 import 'package:car_manager_window/data/global_data.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Image;
 import 'package:get/get.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
+import 'package:google_vision/google_vision.dart';
 import 'package:firedart/firedart.dart';
-
-
 
 class InOutScreen extends StatefulWidget {
   const InOutScreen({Key? key}) : super(key: key);
@@ -24,7 +21,7 @@ class InOutScreen extends StatefulWidget {
 class _InOutScreenState extends State<InOutScreen> {
   String result = '';
   bool takePicture = false;
-  File? image ;
+  File? image;
 
   // Another option which doesn't work as expected is commented.
 
@@ -55,20 +52,70 @@ class _InOutScreenState extends State<InOutScreen> {
   String parsedtext = '';
   parsethetext() async {
     // var bytes = GlobalData.image.bytes;
+    // final googleVision = await GoogleVision.withJwt('my_jwt_credentials.json');
     parsedtext = '';
-    var bytes = File("assets/train_text_recognize/13.jpg").readAsBytesSync();
+    var bytes = File('./assets/train_text_recognize/1.jpg').readAsBytesSync();
 
     String img64 = base64Encode(bytes);
+
+    // final requests = AnnotationRequests(requests: [
+    //   AnnotationRequest(image: bytes, features: [
+    //     Feature(maxResults: 10, type: 'TEXT_DETECTION'),
+    //   ])
+    // ]);
+    //
+    // AnnotatedResponses annotatedResponses =
+    //     await googleVision.annotate(requests: requests);
+    // print(requests);
+    // for (var annotatedResponse in annotatedResponses.responses) {
+    //   for (var faceAnnotation in annotatedResponse.faceAnnotations) {
+    //     GoogleVision.drawText(
+    //         bytes,
+    //         faceAnnotation.boundingPoly.vertices.first.x + 2,
+    //         faceAnnotation.boundingPoly.vertices.first.y + 2,
+    //         'Face - ${faceAnnotation.detectionConfidence}');
+    //
+    //     GoogleVision.drawAnnotations(
+    //         bytes, faceAnnotation.boundingPoly.vertices);
+    //   }
+    // }
+    //
+    // for (var annotatedResponse in annotatedResponses.responses) {
+    //   //look only for Person annotations
+    //   annotatedResponse.localizedObjectAnnotations
+    //       .where((localizedObjectAnnotation) =>
+    //   localizedObjectAnnotation.name == 'Person')
+    //       .toList()
+    //       .forEach((localizedObjectAnnotation) {
+    //     GoogleVision.drawText(
+    //         bytes,
+    //         (localizedObjectAnnotation.boundingPoly.normalizedVertices.first.x *
+    //             bytes.width)
+    //             .toInt(),
+    //         (localizedObjectAnnotation.boundingPoly.normalizedVertices.first.y *
+    //             bytes.height)
+    //             .toInt() -
+    //             16,
+    //         'Person - ${localizedObjectAnnotation.score}');
+    //
+    //     GoogleVision.drawAnnotationsNormalized(
+    //         bytes, localizedObjectAnnotation.boundingPoly.normalizedVertices);
+    //   });
+    // }
+
+//output the results as a new image file
+//     await bytes.writeAsJpeg('resulting_image.jpg');
+
     var url = 'https://api.ocr.space/parse/image';
     var payload = {"base64Image": "data:image/jpg;base64,${img64.toString()}"};
     var header = {"apikey": "K85183784788957"};
     var post = await http.post(Uri.parse(url), body: payload, headers: header);
     var result = jsonDecode(post.body);
     setState(() {
-      // parsedtext = result['ParsedResults'][0]['ParsedText'];
-      // parsedtext = parsedtext.replaceAll("\n", ' ');
-      // parsedtext = parsedtext.replaceAll("\r", "");
-      // print(parsedtext);
+      parsedtext = result['ParsedResults'][0]['ParsedText'];
+      parsedtext = parsedtext.replaceAll("\n", ' ');
+      parsedtext = parsedtext.replaceAll("\r", "");
+      print(parsedtext);
 
       //Test use firestore get data
       parsedtext = "61S2-6051";
@@ -80,7 +127,6 @@ class _InOutScreenState extends State<InOutScreen> {
     // TODO: implement dispose
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -208,7 +254,7 @@ class _InOutScreenState extends State<InOutScreen> {
                     Expanded(
                       flex: 7,
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(10),
                           height: screenHeight * 0.6,
                           width: screenWidth * 0.48,
                           decoration: const BoxDecoration(
@@ -218,13 +264,12 @@ class _InOutScreenState extends State<InOutScreen> {
                           ),
                           child: MyMjpeg(
                             isLive: true,
-                            
                             fit: BoxFit.cover,
                             error: (context, error, stack) {
                               return Text(error.toString(),
                                   style: const TextStyle(color: Colors.red));
                             },
-                            stream: 'http://10.15.223.205:1024/video',
+                            stream: 'http://192.168.1.198:1024/video',
                             takePicture: takePicture,
                           )),
                     ),
@@ -254,23 +299,23 @@ class _InOutScreenState extends State<InOutScreen> {
                     Expanded(
                       flex: 7,
                       child: Container(
-                          height: screenHeight * 0.6,
-                          width: screenWidth * 0.48,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10)),
-                          ),
-                          // child: MyMjpeg(
-                          //   isLive: true,
-                          //   error: (context, error, stack) {
-                          //     return Text(error.toString(),
-                          //         style: const TextStyle(color: Colors.red));
-                          //   },
-                          //   stream: 'http://10.15.223.205:1024/video',
-                          //   takePicture: takePicture,
-                          // )
+                        height: screenHeight * 0.6,
+                        width: screenWidth * 0.48,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10)),
                         ),
+                        // child: MyMjpeg(
+                        //   isLive: true,
+                        //   error: (context, error, stack) {
+                        //     return Text(error.toString(),
+                        //         style: const TextStyle(color: Colors.red));
+                        //   },
+                        //   stream: 'http://10.15.223.205:1024/video',
+                        //   takePicture: takePicture,
+                        // )
+                      ),
                     ),
                     Expanded(
                       flex: 2,
