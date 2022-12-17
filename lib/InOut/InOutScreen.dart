@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:car_manager_window/data/error_pop_up.dart';
 import 'package:car_manager_window/items/detail_inout.dart';
 import 'package:http/http.dart' as http;
 import 'package:car_manager_window/InOut/preprocessor_frame.dart';
@@ -20,8 +21,14 @@ class InOutScreen extends StatefulWidget {
 
 class _InOutScreenState extends State<InOutScreen> {
   String result = '';
+  String ipCamera = 'http://192.168.1.198:1024/video';
   bool takePicture = false;
   File? image;
+  RegExp _numeric = RegExp(r'^-?[0-9]+$');
+
+  bool isNumeric(String str) {
+    return _numeric.hasMatch(str);
+  }
 
   // Another option which doesn't work as expected is commented.
 
@@ -49,93 +56,55 @@ class _InOutScreenState extends State<InOutScreen> {
   //   });
   // }
 
-  String parsedtext = '';
-  parsethetext() async {
-    // var bytes = GlobalData.image.bytes;
+  String parsedTextIn = '';
+  String parsedTextOut = '';
+  parsethetext({bool isIn = true}) async {
+    var bytes = GlobalData.image.bytes;
     // final googleVision = await GoogleVision.withJwt('my_jwt_credentials.json');
-    parsedtext = '';
-    var bytes = File('./assets/train_text_recognize/8.jpg').readAsBytesSync();
+    if (isIn){
+      parsedTextIn = '';
+    }else{
+      parsedTextOut = '';
+    }
+    // var bytes = File('./assets/train_text_recognize/9.jpg').readAsBytesSync();
 
     String img64 = base64Encode(bytes);
 
-    // final requests = AnnotationRequests(requests: [
-    //   AnnotationRequest(image: bytes, features: [
-    //     Feature(maxResults: 10, type: 'TEXT_DETECTION'),
-    //   ])
-    // ]);
-    //
-    // AnnotatedResponses annotatedResponses =
-    //     await googleVision.annotate(requests: requests);
-    // print(requests);
-    // for (var annotatedResponse in annotatedResponses.responses) {
-    //   for (var faceAnnotation in annotatedResponse.faceAnnotations) {
-    //     GoogleVision.drawText(
-    //         bytes,
-    //         faceAnnotation.boundingPoly.vertices.first.x + 2,
-    //         faceAnnotation.boundingPoly.vertices.first.y + 2,
-    //         'Face - ${faceAnnotation.detectionConfidence}');
-    //
-    //     GoogleVision.drawAnnotations(
-    //         bytes, faceAnnotation.boundingPoly.vertices);
-    //   }
-    // }
-    //
-    // for (var annotatedResponse in annotatedResponses.responses) {
-    //   //look only for Person annotations
-    //   annotatedResponse.localizedObjectAnnotations
-    //       .where((localizedObjectAnnotation) =>
-    //   localizedObjectAnnotation.name == 'Person')
-    //       .toList()
-    //       .forEach((localizedObjectAnnotation) {
-    //     GoogleVision.drawText(
-    //         bytes,
-    //         (localizedObjectAnnotation.boundingPoly.normalizedVertices.first.x *
-    //             bytes.width)
-    //             .toInt(),
-    //         (localizedObjectAnnotation.boundingPoly.normalizedVertices.first.y *
-    //             bytes.height)
-    //             .toInt() -
-    //             16,
-    //         'Person - ${localizedObjectAnnotation.score}');
-    //
-    //     GoogleVision.drawAnnotationsNormalized(
-    //         bytes, localizedObjectAnnotation.boundingPoly.normalizedVertices);
-    //   });
-    // }
-
-//output the results as a new image file
-//     await bytes.writeAsJpeg('resulting_image.jpg');
-
-    // print(img64);
     var url = 'https://api.ocr.space/parse/image';
-    var payload = {"base64Image": "data:image/jpg;base64,${img64.toString()}", "ocrengine" : "2"};
-    var header = {"apikey": "K85183784788957"};
+    var payload = {
+      "base64Image": "data:image/jpg;base64,${img64.toString()}",
+      "ocrengine": "2"
+    };
+    var header = {"apikey": "K84243891488957"};
     var post = await http.post(Uri.parse(url), body: payload, headers: header);
-    var result = jsonDecode(post.body);
+    var result = await jsonDecode(post.body);
+    var parsedText = '';
+
     setState(() {
-      // print(result['ParsedResults'][0]['ParsedText']);
-      parsedtext = result['ParsedResults'][0]['ParsedText'];
-      parsedtext = parsedtext.replaceAll("\n", ' ');
-      parsedtext = parsedtext.replaceAll("\r", "");
+      List pairsedResults = result['ParsedResults'];
+      parsedText = pairsedResults.first['ParsedText'] as String;
+      parsedText = parsedText.replaceAll("\n", ' ');
+      parsedText = parsedText.replaceAll("\r", "");
+      print(parsedText);
       var finalPlate = '';
-      print(parsedtext);
-      for (var i =0; i< parsedtext.length; i++){
-        if(parsedtext[i].isNum){
-          finalPlate = parsedtext.substring(i, i+10);
-          while (!finalPlate[finalPlate.length -1].isNum){
-            finalPlate = finalPlate.substring(0, finalPlate.length -2);
+
+      //format parsedText to license plate VietNamese
+      for (var i = 0; i < parsedText.length; i++) {
+        if (parsedText[i].isNum) {
+          finalPlate = parsedText.substring(i, parsedText.length);
+          var subPlate = finalPlate.split(' ')[0];
+          if (subPlate.length > 7){
+            finalPlate = subPlate;
+            break;
+          } else {
+            finalPlate = "$subPlate ${finalPlate.split(' ')[1]}";
+            break;
           }
-          break;
         }
-        else
-        print('hmmm');
       }
+      // showDialog(context: context, builder: (context) => errorLicensePlateIn(context));
 
-      parsedtext = finalPlate;
-      // print(parsedtext);
-
-      //Test use firestore get data
-      // parsedtext = "61S2-6051";
+      isIn ? parsedTextIn = finalPlate : parsedTextOut = finalPlate;
     });
   }
 
@@ -147,6 +116,7 @@ class _InOutScreenState extends State<InOutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     PopupMenuItem<MenuItemm> buildItem(MenuItemm item) => PopupMenuItem(
@@ -286,7 +256,7 @@ class _InOutScreenState extends State<InOutScreen> {
                               return Text(error.toString(),
                                   style: const TextStyle(color: Colors.red));
                             },
-                            stream: 'http://11.93.103.218:1024/video',
+                            stream: ipCamera,
                             takePicture: takePicture,
                           )),
                     ),
@@ -295,9 +265,11 @@ class _InOutScreenState extends State<InOutScreen> {
                       child: DetailInOutWidget(
                         screenWidth: screenWidth,
                         screenHeight: screenHeight,
-                        parseTheText: parsethetext,
+                        parseTheText: (){
+                          parsethetext(isIn : true);
+                        },
                         mode: "vào",
-                        plate: parsedtext,
+                        plate: parsedTextIn,
                       ),
                     )
                   ],
@@ -339,9 +311,11 @@ class _InOutScreenState extends State<InOutScreen> {
                       child: DetailInOutWidget(
                         screenWidth: screenWidth,
                         screenHeight: screenHeight,
-                        parseTheText: parsethetext,
+                        parseTheText: (){
+                          parsethetext(isIn : false);
+                        } ,
                         mode: "ra",
-                        plate: parsedtext,
+                        plate: parsedTextOut,
                       ),
                     )
                   ],

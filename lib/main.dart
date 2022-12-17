@@ -6,6 +6,7 @@ import 'package:car_manager_window/Setting/SettingScreen.dart';
 import 'package:car_manager_window/Statistic/StatisticScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dart/implementation/pure_dart.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
 import 'Login/LoginScreen.dart';
@@ -15,7 +16,9 @@ import 'firebase_options.dart';
 const apiKey = "AIzaSyCdnTfbryr5lxHakHyEcvnBx6CHdGye5-E";
 const projectId = "flutter-car-manager-mobile";
 Future main() async{
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  FirebaseDart.setup();
+
   // await Firebase.initializeApp(
   //     options:  DefaultFirebaseOptions.web);
   // await Firebase.initializeApp(
@@ -25,7 +28,9 @@ Future main() async{
   //         messagingSenderId: "387750916082",
   //         appId: "1:387750916082:web:01ee70eff0036b9289056b"
   //     ));
+  // await Firebase.initializeApp();
   Firestore.initialize(projectId);
+
   return runApp(const MyApp());
 }
 

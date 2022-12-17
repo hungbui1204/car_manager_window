@@ -98,6 +98,7 @@ flutter:
     - assets/images/background3.jpg
     - assets/images/coming_soon.jpg
     - assets/images/coming_soon2.jpg
+    - assets/images/warning.png
     - assets/images/update.jpg
     - assets/images/speaker.png
     - assets/json/resident_data.json

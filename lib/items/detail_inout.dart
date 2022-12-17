@@ -1,12 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:car_manager_window/data/error_pop_up.dart';
+import 'package:car_manager_window/firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firedart/firedart.dart';
 import 'package:firebase_dart/firebase_dart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../data/global_data.dart';
+
 const apiKey = 'AIzaSyCdnTfbryr5lxHakHyEcvnBx6CHdGye5-E';
 const projectId = 'flutter-car-manager-mobile';
 
@@ -25,7 +30,8 @@ class DetailInOutWidget extends StatefulWidget {
       this.screenHeight,
       this.image,
       required this.parseTheText,
-      this.mode, this.plate})
+      this.mode,
+      this.plate})
       : super(key: key);
 
   @override
@@ -40,37 +46,50 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
   //   widget.takePicture = false;
   // }
   bool recognize = false;
-  String id ='';
+  String id = '';
   String name = '';
   String time_in = '';
   String type = '';
 
-  ImportImageFirebaseStorage(String path, String name) async{
-    // FirebaseDart.setup();
-    // var app = await Firebase.initializeApp(
-    //     options: const FirebaseOptions(
-    //         appId: '1:387750916082:web:01ee70eff0036b9289056b',
-    //         apiKey: 'AIzaSyCdnTfbryr5lxHakHyEcvnBx6CHdGye5-E',
-    //         projectId: 'flutter-car-manager-mobile',
-    //         messagingSenderId: '387750916082',
-    //         authDomain: 'flutter-car-manager-mobile.firebaseapp.com',
-    //         storageBucket: 'flutter-car-manager-mobile.appspot.com')
-    // );
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initFirebase();
+  }
+
+  void initFirebase() async{
+    var app = await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            appId: '1:387750916082:web:01ee70eff0036b9289056b',
+            apiKey: 'AIzaSyCdnTfbryr5lxHakHyEcvnBx6CHdGye5-E',
+            projectId: 'flutter-car-manager-mobile',
+            messagingSenderId: '387750916082',
+            authDomain: 'flutter-car-manager-mobile.firebaseapp.com',
+            storageBucket: 'flutter-car-manager-mobile.appspot.com')
+    );
+  }
+
+  String getRandomId(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+
+  ImportImageFirebaseStorage(String path, String name) async {
+
     var storage = FirebaseStorage.instance;
-    File pic = File("assets/train_text_recognize/1.jpg");
-    Uint8List picU = await pic.readAsBytes();
+    // File pic = File("assets/train_text_recognize/1.jpg");
+    // Uint8List picU = await pic.readAsBytes();
+    Uint8List picU = GlobalData.image.bytes;
     var ref = storage.ref().child('$path/$name.jpg');
     await ref.putData(picU);
   }
 
-
-  String GetDateTime(){
+  String GetDateTime() {
     DateTime date = DateTime.now();
     String dateformat = DateFormat('HH:mm:ss dd-M-yy').format(date);
     return dateformat;
   }
 
-  List<String> HistoryParking(List data){
+  List<String> HistoryParking(List data) {
     List<String> history = [];
     data.forEach((element) {
       history.add(element);
@@ -78,25 +97,113 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
     return history;
   }
 
-  Future GetData(String plate) async{
+  Future getData(String plate) async {
+    // Firebase.initializeApp();
+    // await Firebase.initializeApp(
+    //     options:  DefaultFirebaseOptions.web);
+    var fireStore = Firestore(projectId);
+    if (plate == '' || plate.length <= 7){
+      Future.delayed(const Duration(milliseconds: 500), () {
+        showDialog(context: context, builder: (context) => errorPlate(context));
+        setState(() {
+          recognize = false;
+        });
+      });
 
-    var firestore = Firestore(projectId);
-    var ref = await firestore.collection('user_data').where('number', isEqualTo: plate).get();
-    var data = await firestore.document(ref.first.path).get();
-    var history = HistoryParking(data['history']);
-    id = data['id'];
-    name = data['name'];
-    time_in = GetDateTime();
-    var time = widget.mode == "vào" ? "IN $time_in" : "OUT $time_in";
-    // var time = 'IN 00:00:00 10-10-22';
-    history.add(time);
-    firestore.document(ref.first.path).update(
-        {'history': history});
-    type = data['type'];
-    ImportImageFirebaseStorage(ref.first.path, time);
-    setState(() {
+      return;
+    }
+    try {
+      var ref = await fireStore
+          .collection('user_data')
+          .where('number', isEqualTo: plate)
+          .get();
+      var data = await fireStore.document(ref.first.path).get();
+      var history = HistoryParking(data['history']);
+      if (history.last.split(' ')[0] == 'IN' && widget.mode == 'vào') {
+        showDialog(
+            context: context,
+            builder: (context) => errorLicensePlateIn(context));
+        return;
+      } else if (history.last.split(' ')[0] == 'OUT' && widget.mode == 'ra') {
+        showDialog(
+            context: context,
+            builder: (context) => errorLicensePlateOut(context));
+        return;
+      }
+      id = data['id'];
+      name = data['name'];
+      time_in = GetDateTime();
+      var time = widget.mode == "vào" ? "IN $time_in" : "OUT $time_in";
+      history.add(time);
+      fireStore.document(ref.first.path).update({'history': history});
+      type = data['type'];
+      ImportImageFirebaseStorage(ref.first.path, time);
+      setState(() {});
+    } catch (e) {
+      if (widget.mode == 'vào') {
+        try {
+          var check = await fireStore
+              .collection('guest_data')
+              .where('number', isEqualTo: plate)
+              .get();
+          print(check.first.path);
+          showDialog(
+              context: context,
+              builder: (context) => errorLicensePlateIn(context));
+          return;
+        } catch (e) {
+          var randomId = getRandomId(20);
+          var ref = fireStore.collection('guest_data').document(randomId);
+          id = randomId;
+          name = 'Anonymous / Guest';
+          time_in = GetDateTime();
+          var time = "IN $time_in";
+          ImportImageFirebaseStorage('guest_data', "$plate $time");
+          ref.set({
+            'id': id,
+            'name': name,
+            'time_in': time_in,
+            'number': plate,
+          });
+          setState(() {});
+        }
+      }
+      else if (widget.mode == 'ra') {
+        try {
+          var check = await fireStore
+              .collection('guest_data')
+              .where('number', isEqualTo: plate)
+              .get();
+          var data = await fireStore.document(check.first.path).get();
+          id = data['id'];
+          name = 'Anonymous / Guest';
+          time_in = GetDateTime();
+          var time = "OUT $time_in";
+          ImportImageFirebaseStorage('guest_data', "$plate $time");
+          await fireStore.document(check.first.path).delete();
 
-    });
+          setState(() {});
+          print('delete guest complete');
+        } catch (e) {
+          print('GuestOutError: $e');
+          showDialog(
+              context: context,
+              builder: (context) => errorLicensePlateOut(context));
+          return;
+          // var randomId = getRandomId(20);
+          // var ref = fireStore.collection('guest_data').document(randomId);
+          // id = randomId;
+          // name = 'Anonymous / Guest';
+          // time_in = GetDateTime();
+          // ref.set({
+          //   'id': id,
+          //   'name': name,
+          //   'time_in': time_in,
+          //   'number': plate,
+          // });
+        }
+      }
+    }
   }
 
   // void displaySuccessMotionToast() {
@@ -119,12 +226,16 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (recognize){
-      recognize = (widget.plate != '') ? false : true;
-      if (widget.plate!=''){
-        GetData(widget.plate);
-      }
+    //So sánh nếu nhận diện đc biển số sẽ kiểm tra lên firebase
+    if (recognize) {
 
+      // Timer(Duration(seconds: 5), (){
+      //   recognize = true;
+      // });
+      // if (widget.plate != '') {
+        getData(widget.plate);
+      // }
+      recognize = (widget.plate != '') ? false : true;
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -152,11 +263,12 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
           Expanded(
             child: MaterialButton(
               height: widget.screenHeight,
-              color: (widget.mode == "vào") ? Colors.green[200] : Colors.red[200],
+              color:
+                  (widget.mode == "vào") ? Colors.green[200] : Colors.red[200],
               hoverColor: (widget.mode == "vào") ? Colors.green : Colors.red,
               onPressed: () async {
                 widget.plate = '';
-                id ='';
+                id = '';
                 name = '';
                 time_in = '';
                 type = '';
@@ -167,18 +279,24 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
                 File('my_image.jpg').writeAsBytes(GlobalData.image.bytes);
                 widget.parseTheText();
               },
-              child: (!recognize) ? Text(
-                (widget.mode == "vào") ? "ENTRANCE" : "EXIT",
-                style: TextStyle(
-                  color: (widget.mode == "vào") ? Colors.brown : Colors.white70,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  fontFamily: "Time New Roman",
-                ),
-              ) :  CircularProgressIndicator(
-                color: (widget.mode == "vào") ? Colors.brown : Colors.white70,
-                strokeWidth: 6,
-              ),
+              child: (!recognize)
+                  ? Text(
+                      (widget.mode == "vào") ? "ENTRANCE" : "EXIT",
+                      style: TextStyle(
+                        color: (widget.mode == "vào")
+                            ? Colors.brown
+                            : Colors.white70,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        fontFamily: "Time New Roman",
+                      ),
+                    )
+                  : CircularProgressIndicator(
+                      color: (widget.mode == "vào")
+                          ? Colors.brown
+                          : Colors.white70,
+                      strokeWidth: 6,
+                    ),
             ),
           ),
         ],
@@ -197,7 +315,9 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
             fontSize: 15,
           ),
         ),
-        const SizedBox(width: 15,),
+        const SizedBox(
+          width: 10,
+        ),
         Expanded(
           child: Text(
             data,
