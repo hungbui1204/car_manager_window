@@ -261,8 +261,8 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: index.isEven
-                                      ? Color.fromARGB(255, 31, 20, 86)
-                                      : Color.fromARGB(255, 5, 194, 204),
+                                      ? const Color.fromARGB(255, 31, 20, 86)
+                                      : const Color.fromARGB(255, 5, 194, 204),
                                 ),
                               );
                             },

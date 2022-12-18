@@ -111,7 +111,6 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     List<GridColumn> getColumns() {
       return <GridColumn>[

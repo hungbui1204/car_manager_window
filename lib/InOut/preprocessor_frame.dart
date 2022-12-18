@@ -103,7 +103,7 @@ class MyMjpeg extends HookWidget {
             child: Text(
               '${errorState.value}',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.red),
             ),
           ),
         )
@@ -116,7 +116,7 @@ class MyMjpeg extends HookWidget {
           width: width,
           height: height,
           child: loading == null
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : loading!(context));
     }
 

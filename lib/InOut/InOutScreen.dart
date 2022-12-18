@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:car_manager_window/data/error_pop_up.dart';
 import 'package:car_manager_window/items/detail_inout.dart';
 import 'package:http/http.dart' as http;
 import 'package:car_manager_window/InOut/preprocessor_frame.dart';
@@ -9,8 +8,6 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:get/get.dart';
 import '../data/menu_items.dart';
 import '../model/menu_item.dart';
-// import 'package:google_vision/google_vision.dart';
-import 'package:firedart/firedart.dart';
 
 class InOutScreen extends StatefulWidget {
   const InOutScreen({Key? key}) : super(key: key);
@@ -25,7 +22,7 @@ class _InOutScreenState extends State<InOutScreen> {
   String ipCamera = 'http://192.168.61.44:1024/video';
   bool takePicture = false;
   File? image;
-  RegExp _numeric = RegExp(r'^-?[0-9]+$');
+  final RegExp _numeric = RegExp(r'^-?[0-9]+$');
 
   bool isNumeric(String str) {
     return _numeric.hasMatch(str);
@@ -88,7 +85,6 @@ class _InOutScreenState extends State<InOutScreen> {
       parsedText = pairsedResults.first['ParsedText'] as String;
       parsedText = parsedText.replaceAll("\n", ' ');
       parsedText = parsedText.replaceAll("\r", "");
-      print(parsedText);
       var finalPlate = '';
 
       //format parsedText to license plate VietNamese
@@ -244,7 +240,7 @@ class _InOutScreenState extends State<InOutScreen> {
                     Expanded(
                       flex: 7,
                       child: Container(
-                          padding: EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(10),
                           height: screenHeight * 0.6,
                           width: screenWidth * 0.48,
                           decoration: const BoxDecoration(
