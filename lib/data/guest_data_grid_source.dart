@@ -53,7 +53,7 @@ class GuestDataSource extends DataGridSource{
       return DataGridRow(cells: [
         DataGridCell<String>(columnName: 'ID', value: dataGridRow.id),
         DataGridCell<String>(
-            columnName: 'Transport Type', value: dataGridRow.type),
+            columnName: 'User', value: dataGridRow.name),
         DataGridCell<String>(
             columnName: 'Number', value: dataGridRow.number),
         DataGridCell<DateTime>(columnName: 'Time In', value: dataGridRow.timeIn)

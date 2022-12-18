@@ -17,47 +17,51 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
   TextEditingController numberController = TextEditingController();
   TextEditingController transportController = TextEditingController();
   bool search = false;
-  bool searchUpToDown = false;
-  bool searchDownToUp = false;
+  bool searchUpToDown = true;
+  // bool searchDownToUp = false;
   Future<GuestDataSource> getGuestDataSource() async {
-    var guestList = await getListGuestData(searchUpToDown, searchDownToUp);
+    var guestList = await getListGuestData(searchUpToDown);
     List<GuestData> guestSearch = [];
-    for(var i in guestList){
-      if(idController.value.text == i.id
-          && numberController.value.text ==''
-          && transportController.value.text == ''){
+    for (var i in guestList) {
+      if (i.id!.contains(idController.value.text) &&
+          numberController.value.text == '' &&
+          transportController.value.text == '') {
         guestSearch.add(i);
-      }else if(idController.value.text == i.id
-          && numberController.value.text == i.number
-          && transportController.value.text == ''){
+      } else if (i.id!.contains(idController.value.text) &&
+          i.number!.contains(numberController.value.text) &&
+          transportController.value.text == '') {
         guestSearch.add(i);
-      }else if(idController.value.text == ''
-          && numberController.value.text == i.number
-          && transportController.value.text == ''){
+      } else if (idController.value.text == '' &&
+          i.number!.contains(numberController.value.text) &&
+          transportController.value.text == '') {
         guestSearch.add(i);
-      }else if(idController.value.text == i.id
-          && numberController.value.text == ''
-          && transportController.value.text == i.type){
+      } else if (i.id!.contains(idController.value.text) &&
+          numberController.value.text == '' &&
+          i.name!.contains(transportController.value.text)) {
         guestSearch.add(i);
-      }else if(idController.value.text == ''
-          && numberController.value.text == i.number
-          && transportController.value.text == i.type){
+      } else if (idController.value.text == '' &&
+          i.number!.contains(numberController.value.text) &&
+          i.name!.contains(transportController.value.text)) {
         guestSearch.add(i);
-      }else if(idController.value.text == ''
-          && numberController.value.text == ''
-          && transportController.value.text == i.type){
+      } else if (idController.value.text == '' &&
+          numberController.value.text == '' &&
+          i.name!.contains(transportController.value.text)) {
         guestSearch.add(i);
-      }else if(idController.value.text == i.id
-          && numberController.value.text == i.number
-          && transportController.value.text == i.type){
+      } else if (i.id!.contains(idController.value.text) &&
+          i.number!.contains(numberController.value.text) &&
+          i.name!.contains(transportController.value.text)) {
         guestSearch.add(i);
       }
     }
-    if(search == false){
+    if (search == false) {
       return GuestDataSource(guestList);
-    }else if(search == true && idController.value.text =='' && numberController.value.text == '' && transportController.value.text == ''){
+    } else if (search == true &&
+        idController.value.text == '' &&
+        numberController.value.text == '' &&
+        transportController.value.text == '') {
       return GuestDataSource(guestList);
-    }else{
+    } else {
+
       return GuestDataSource(guestSearch);
     }
   }
@@ -70,55 +74,71 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
       return <GridColumn>[
         GridColumn(
             columnName: 'ID',
-            width: screenWidth*0.25,
+            width: screenWidth * 0.25,
             label: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.centerLeft,
                 child: const Text('ID',
                     style: TextStyle(
-                        fontSize: 18, color: Color.fromARGB(255, 31,20,86),
-                        fontWeight: FontWeight.bold
-                    ),
-                    overflow: TextOverflow.clip, softWrap: true))),
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 31, 20, 86),
+                        fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.clip,
+                    softWrap: true))),
         GridColumn(
-            columnName: 'Transport Type',
-            width: screenWidth*0.25,
+            columnName: 'User',
+            width: screenWidth * 0.25,
             label: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.centerLeft,
-                child: const Text('Transport Type',
-                    style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
+                child: const Text('User',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 31, 20, 86),
                         fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.clip, softWrap: true))),
+                    overflow: TextOverflow.clip,
+                    softWrap: true))),
         GridColumn(
             columnName: 'Number',
-            width: screenWidth*0.25,
+            width: screenWidth * 0.25,
             label: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.centerLeft,
                 child: const Text('Number',
-                    style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromARGB(255, 31, 20, 86),
                         fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.clip, softWrap: true))),
+                    overflow: TextOverflow.clip,
+                    softWrap: true))),
         GridColumn(
             columnName: 'Time In',
-            width: screenWidth*0.25,
+            width: screenWidth * 0.25,
             label: Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.centerLeft,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Time In', style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 31,20,86),
-                        fontWeight: FontWeight.bold),),
+                    const Text(
+                      'Time In',
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Color.fromARGB(255, 31, 20, 86),
+                          fontWeight: FontWeight.bold),
+                    ),
                     GestureDetector(
-                      child: Icon(searchUpToDown == false
-                          ? Icons.arrow_downward
-                          : Icons.arrow_upward,size: 17, color: const Color.fromARGB(255, 31,20,86),),
-                      onTap: (){
+                      child: Icon(
+                        searchUpToDown == false
+                            ? Icons.arrow_downward
+                            : Icons.arrow_upward,
+                        size: 17,
+                        color: const Color.fromARGB(255, 31, 20, 86),
+                      ),
+                      onTap: () {
                         setState(() {
                           searchUpToDown = !searchUpToDown;
-                          searchDownToUp = !searchUpToDown;
+                          // searchDownToUp = !searchUpToDown;
                         });
                       },
                     )
@@ -126,10 +146,11 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
                 )))
       ];
     }
+
     return Scaffold(
         appBar: AppBar(
           toolbarHeight: 80,
-          backgroundColor: const Color.fromARGB(255, 5,194,204),
+          backgroundColor: const Color.fromARGB(255, 5, 194, 204),
           actions: [
             SizedBox(
               width: screenWidth,
@@ -143,12 +164,14 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
                         controller: idController,
                         decoration: const InputDecoration(
                           fillColor: Colors.white,
-                          focusedBorder:  OutlineInputBorder(
-                              borderSide: BorderSide(width: 0.5,color: Color.fromARGB(255, 31,20,86))
-                          ),
-                          border:  OutlineInputBorder(
-                              borderSide: BorderSide(width: 0.5,color: Color.fromARGB(255, 31,20,86))
-                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  width: 0.5,
+                                  color: Color.fromARGB(255, 31, 20, 86))),
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  width: 0.5,
+                                  color: Color.fromARGB(255, 31, 20, 86))),
                           hintText: 'Card ID',
                         ),
                       )),
@@ -160,11 +183,13 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
                         decoration: const InputDecoration(
                           fillColor: Colors.white,
                           focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(width: 0.5,color: Color.fromARGB(255, 31,20,86))
-                          ),
+                              borderSide: BorderSide(
+                                  width: 0.5,
+                                  color: Color.fromARGB(255, 31, 20, 86))),
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(width: 0.5,color: Color.fromARGB(255, 31,20,86))
-                          ),
+                              borderSide: BorderSide(
+                                  width: 0.5,
+                                  color: Color.fromARGB(255, 31, 20, 86))),
                           hintText: 'Number Plate',
                         ),
                       )),
@@ -176,35 +201,43 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
                         decoration: const InputDecoration(
                           fillColor: Colors.white,
                           focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(width: 0.5,color: Color.fromARGB(255, 31,20,86))
-                          ),
+                              borderSide: BorderSide(
+                                  width: 0.5,
+                                  color: Color.fromARGB(255, 31, 20, 86))),
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(width: 0.5,color: Color.fromARGB(255, 31,20,86))
-                          ),
-                          hintText: 'Transport',
+                              borderSide: BorderSide(
+                                  width: 0.5,
+                                  color: Color.fromARGB(255, 31, 20, 86))),
+                          hintText: 'User',
                         ),
                       )),
                   Row(
                     children: [
-                      const Text('Search', style: TextStyle(
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 31,20,86),
-                      ),),
-                      const SizedBox(width: 10,),
+                      const Text(
+                        'Search',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color.fromARGB(255, 31, 20, 86),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       SizedBox(
                         height: 50,
                         width: 80,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 31,20,86)
-                            ),
-                            onPressed: (){
+                                backgroundColor:
+                                    const Color.fromARGB(255, 31, 20, 86)),
+                            onPressed: () {
                               setState(() {
-                                search =true;
+                                search = true;
                               });
                             },
-                            child: const Icon(Icons.search,)
-                        ),
+                            child: const Icon(
+                              Icons.search,
+                            )),
                       ),
                     ],
                   )
@@ -217,7 +250,8 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
         body: SafeArea(
             child: FutureBuilder(
                 future: getGuestDataSource(),
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   return snapshot.hasData
                       ? SfDataGrid(source: snapshot.data, columns: getColumns())
                       : Center(
@@ -226,14 +260,16 @@ class _GuestCardScreenState extends State<GuestCardScreen> {
                               return DecoratedBox(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: index.isEven ? Color.fromARGB(255, 31,20,86) : Color.fromARGB(255, 5,194,204),
+                                  color: index.isEven
+                                      ? Color.fromARGB(255, 31, 20, 86)
+                                      : Color.fromARGB(255, 5, 194, 204),
                                 ),
                               );
                             },
                             //color: Color.fromARGB(255, 31,20,86),
                             size: 50.0,
-                          ),);}
-            )
-        ));
+                          ),
+                        );
+                })));
   }
 }

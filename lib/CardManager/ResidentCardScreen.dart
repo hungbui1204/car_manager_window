@@ -23,80 +23,80 @@ class _ResidentCardScreenState extends State<ResidentCardScreen> {
     var residentList = await getListResidentData(searchUpToDown, searchDownToUp);
     List<ResidentData> residentSearch = [];
     for(var i in residentList){
-      if(idController.value.text == i.id
+      if(i.id!.contains(idController.value.text)
           && numberController.value.text ==''
           && nameController.value.text == ''
           && transportController.value.text == ''){
         residentSearch.add(i);
-      }else if(idController.value.text == i.id
-          && numberController.value.text == i.number
+      }else if(i.id!.contains(idController.value.text)
+          && i.number!.contains(numberController.value.text)
           && nameController.value.text == ''
           && transportController.value.text == ''){
         residentSearch.add(i);
-      }else if(idController.value.text == i.id
-          && numberController.value.text == i.number
-          && nameController.value.text == i.name
+      }else if(i.id!.contains(idController.value.text)
+          && i.number!.contains(numberController.value.text)
+          && i.name!.contains(nameController.value.text)
           && transportController.value.text == ''){
         residentSearch.add(i);
-      }else if(idController.value.text == i.id
-          && numberController.value.text == i.number
-          && nameController.value.text == i.name
-          && transportController.value.text == i.type){
+      }else if(i.id!.contains(idController.value.text)
+          && i.number!.contains(numberController.value.text)
+          && i.name!.contains(nameController.value.text)
+          && i.type!.contains(transportController.value.text)){
         residentSearch.add(i);
       }else if(idController.value.text == ''
-          && numberController.value.text == i.number
+          && i.number!.contains(numberController.value.text)
           && nameController.value.text == ''
           && transportController.value.text == ''){
         residentSearch.add(i);
       }else if(idController.value.text == ''
-          && numberController.value.text == i.number
-          && nameController.value.text == i.name
+          && i.number!.contains(numberController.value.text)
+          && i.name!.contains(nameController.value.text)
           && transportController.value.text == ''){
         residentSearch.add(i);
       }else if(idController.value.text == ''
-          && numberController.value.text == i.number
-          && nameController.value.text == i.name
-          && transportController.value.text == i.type){
+          && i.number!.contains(numberController.value.text)
+          && i.name!.contains(nameController.value.text)
+          && i.type!.contains(transportController.value.text)){
         residentSearch.add(i);
       }else if(idController.value.text == ''
           && numberController.value.text == ''
-          && nameController.value.text == i.name
+          && i.name!.contains(nameController.value.text)
           && transportController.value.text == ''){
         residentSearch.add(i);
       }else if(idController.value.text == ''
           && numberController.value.text == ''
-          && nameController.value.text == i.name
-          && transportController.value.text == i.type){
+          && i.name!.contains(nameController.value.text)
+          && i.type!.contains(transportController.value.text)){
         residentSearch.add(i);
-      }else if(idController.value.text == i.id
+      }else if(i.id!.contains(idController.value.text)
           && numberController.value.text == ''
-          && nameController.value.text == i.name
+          && i.name!.contains(nameController.value.text)
           && transportController.value.text == ''){
         residentSearch.add(i);
-      }else if(idController.value.text == i.id
+      }else if(i.id!.contains(idController.value.text)
           && numberController.value.text == ''
           && nameController.value.text == ''
-          && transportController.value.text == i.type){
+          && i.type!.contains(transportController.value.text)){
         residentSearch.add(i);
       }else if(idController.value.text == ''
-          && numberController.value.text == i.number
+          && i.number!.contains(numberController.value.text)
           && nameController.value.text == ''
-          && transportController.value.text == i.type){
+          && i.type!.contains(transportController.value.text)){
         residentSearch.add(i);
       }else if(idController.value.text == ''
           && numberController.value.text == ''
           && nameController.value.text == ''
-          && transportController.value.text == i.type){
+          && i.type!.contains(transportController.value.text)){
         residentSearch.add(i);
-      }else if(idController.value.text == i.id
-          && numberController.value.text == i.number
+      }else if(i.id!.contains(idController.value.text)
+          && i.number!.contains(numberController.value.text)
           && nameController.value.text == ''
-          && transportController.value.text == i.type){
+          && i.type!.contains(transportController.value.text)){
         residentSearch.add(i);
-      }else if(idController.value.text == i.id
+      }else if(i.id!.contains(idController.value.text)
           && numberController.value.text == ''
-          && nameController.value.text == i.name
-          && transportController.value.text == i.type){
+          && i.name!.contains(nameController.value.text)
+          && i.type!.contains(transportController.value.text)){
         residentSearch.add(i);
       }
     }
