@@ -24,6 +24,7 @@ class DetailInOutWidget extends StatefulWidget {
   final mode;
   var plate;
   final ParseText parseTheText;
+  var result;
   DetailInOutWidget(
       {Key? key,
       this.screenWidth,
@@ -31,6 +32,7 @@ class DetailInOutWidget extends StatefulWidget {
       this.image,
       required this.parseTheText,
       this.mode,
+        this.result,
       this.plate})
       : super(key: key);
 
@@ -101,109 +103,112 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
     // Firebase.initializeApp();
     // await Firebase.initializeApp(
     //     options:  DefaultFirebaseOptions.web);
-    var fireStore = Firestore(projectId);
-    if (plate == '' || plate.length <= 7){
-      Future.delayed(const Duration(milliseconds: 500), () {
-        showDialog(context: context, builder: (context) => errorPlate(context));
-        setState(() {
-          recognize = false;
+    if (widget.result != null){
+      var fireStore = Firestore(projectId);
+      if (plate == '' || plate.length <= 7){
+        Future.delayed(const Duration(milliseconds: 500), () {
+          showDialog(context: context, builder: (context) => errorPlate(context));
+          setState(() {
+            recognize = false;
+          });
         });
-      });
 
-      return;
-    }
-    try {
-      var ref = await fireStore
-          .collection('user_data')
-          .where('number', isEqualTo: plate)
-          .get();
-      var data = await fireStore.document(ref.first.path).get();
-      var history = HistoryParking(data['history']);
-      if (history.last.split(' ')[0] == 'IN' && widget.mode == 'vào') {
-        showDialog(
-            context: context,
-            builder: (context) => errorLicensePlateIn(context));
-        return;
-      } else if (history.last.split(' ')[0] == 'OUT' && widget.mode == 'ra') {
-        showDialog(
-            context: context,
-            builder: (context) => errorLicensePlateOut(context));
         return;
       }
-      id = data['id'];
-      name = data['name'];
-      time_in = GetDateTime();
-      var time = widget.mode == "vào" ? "IN $time_in" : "OUT $time_in";
-      history.add(time);
-      fireStore.document(ref.first.path).update({'history': history});
-      type = data['type'];
-      ImportImageFirebaseStorage(ref.first.path, time);
-      setState(() {});
-    } catch (e) {
-      if (widget.mode == 'vào') {
-        try {
-          var check = await fireStore
-              .collection('guest_data')
-              .where('number', isEqualTo: plate)
-              .get();
-          print(check.first.path);
+      try {
+        var ref = await fireStore
+            .collection('user_data')
+            .where('number', isEqualTo: plate)
+            .get();
+        var data = await fireStore.document(ref.first.path).get();
+        var history = HistoryParking(data['history']);
+        if (history.last.split(' ')[0] == 'IN' && widget.mode == 'vào') {
           showDialog(
               context: context,
               builder: (context) => errorLicensePlateIn(context));
           return;
-        } catch (e) {
-          var randomId = getRandomId(20);
-          var ref = fireStore.collection('guest_data').document(randomId);
-          id = randomId;
-          name = 'Anonymous / Guest';
-          time_in = GetDateTime();
-          var time = "IN $time_in";
-          ImportImageFirebaseStorage('guest_data', "$plate $time");
-          ref.set({
-            'id': id,
-            'name': name,
-            'time_in': time_in,
-            'number': plate,
-          });
-          setState(() {});
-        }
-      }
-      else if (widget.mode == 'ra') {
-        try {
-          var check = await fireStore
-              .collection('guest_data')
-              .where('number', isEqualTo: plate)
-              .get();
-          var data = await fireStore.document(check.first.path).get();
-          id = data['id'];
-          name = 'Anonymous / Guest';
-          time_in = GetDateTime();
-          var time = "OUT $time_in";
-          ImportImageFirebaseStorage('guest_data', "$plate $time");
-          await fireStore.document(check.first.path).delete();
-
-          setState(() {});
-          print('delete guest complete');
-        } catch (e) {
-          print('GuestOutError: $e');
+        } else if (history.last.split(' ')[0] == 'OUT' && widget.mode == 'ra') {
           showDialog(
               context: context,
               builder: (context) => errorLicensePlateOut(context));
           return;
-          // var randomId = getRandomId(20);
-          // var ref = fireStore.collection('guest_data').document(randomId);
-          // id = randomId;
-          // name = 'Anonymous / Guest';
-          // time_in = GetDateTime();
-          // ref.set({
-          //   'id': id,
-          //   'name': name,
-          //   'time_in': time_in,
-          //   'number': plate,
-          // });
+        }
+        id = data['id'];
+        name = data['name'];
+        time_in = GetDateTime();
+        var time = widget.mode == "vào" ? "IN $time_in" : "OUT $time_in";
+        history.add(time);
+        fireStore.document(ref.first.path).update({'history': history});
+        type = data['type'];
+        ImportImageFirebaseStorage(ref.first.path, time);
+        setState(() {});
+      } catch (e) {
+        if (widget.mode == 'vào') {
+          try {
+            var check = await fireStore
+                .collection('guest_data')
+                .where('number', isEqualTo: plate)
+                .get();
+            print(check.first.path);
+            showDialog(
+                context: context,
+                builder: (context) => errorLicensePlateIn(context));
+            return;
+          } catch (e) {
+            var randomId = getRandomId(20);
+            var ref = fireStore.collection('guest_data').document(randomId);
+            id = randomId;
+            name = 'Anonymous / Guest';
+            time_in = GetDateTime();
+            var time = "IN $time_in";
+            ImportImageFirebaseStorage('guest_data', "$plate $time");
+            ref.set({
+              'id': id,
+              'name': name,
+              'time_in': time_in,
+              'number': plate,
+            });
+            setState(() {});
+          }
+        }
+        else if (widget.mode == 'ra') {
+          try {
+            var check = await fireStore
+                .collection('guest_data')
+                .where('number', isEqualTo: plate)
+                .get();
+            var data = await fireStore.document(check.first.path).get();
+            id = data['id'];
+            name = 'Anonymous / Guest';
+            time_in = GetDateTime();
+            var time = "OUT $time_in";
+            ImportImageFirebaseStorage('guest_data', "$plate $time");
+            await fireStore.document(check.first.path).delete();
+
+            setState(() {});
+            print('delete guest complete');
+          } catch (e) {
+            print('GuestOutError: $e');
+            showDialog(
+                context: context,
+                builder: (context) => errorLicensePlateOut(context));
+            return;
+            // var randomId = getRandomId(20);
+            // var ref = fireStore.collection('guest_data').document(randomId);
+            // id = randomId;
+            // name = 'Anonymous / Guest';
+            // time_in = GetDateTime();
+            // ref.set({
+            //   'id': id,
+            //   'name': name,
+            //   'time_in': time_in,
+            //   'number': plate,
+            // });
+          }
         }
       }
     }
+
   }
 
   // void displaySuccessMotionToast() {
@@ -250,11 +255,11 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
               child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              detail("Mã thẻ", "$id"),
-              detail("Chủ sở hữu", "$name"),
+              detail("Mã thẻ", id),
+              detail("Chủ sở hữu", name),
               detail("Biển số", widget.plate ?? ""),
-              detail("Loại xe", "$type"),
-              detail("Thời gian ${widget.mode}", "$time_in")
+              detail("Loại xe", type),
+              detail("Thời gian ${widget.mode}", time_in)
             ],
           )),
           const SizedBox(
@@ -268,6 +273,7 @@ class _DetailInOutWidgetState extends State<DetailInOutWidget> {
               hoverColor: (widget.mode == "vào") ? Colors.green : Colors.red,
               onPressed: () async {
                 widget.plate = '';
+                widget.result = null;
                 id = '';
                 name = '';
                 time_in = '';

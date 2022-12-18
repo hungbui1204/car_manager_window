@@ -21,7 +21,8 @@ class InOutScreen extends StatefulWidget {
 
 class _InOutScreenState extends State<InOutScreen> {
   String result = '';
-  String ipCamera = 'http://192.168.1.198:1024/video';
+  var resultAPI;
+  String ipCamera = 'http://192.168.61.44:1024/video';
   bool takePicture = false;
   File? image;
   RegExp _numeric = RegExp(r'^-?[0-9]+$');
@@ -59,6 +60,7 @@ class _InOutScreenState extends State<InOutScreen> {
   String parsedTextIn = '';
   String parsedTextOut = '';
   parsethetext({bool isIn = true}) async {
+    resultAPI = null;
     var bytes = GlobalData.image.bytes;
     // final googleVision = await GoogleVision.withJwt('my_jwt_credentials.json');
     if (isIn){
@@ -79,6 +81,7 @@ class _InOutScreenState extends State<InOutScreen> {
     var post = await http.post(Uri.parse(url), body: payload, headers: header);
     var result = await jsonDecode(post.body);
     var parsedText = '';
+    resultAPI = result;
 
     setState(() {
       List pairsedResults = result['ParsedResults'];
@@ -269,6 +272,7 @@ class _InOutScreenState extends State<InOutScreen> {
                           parsethetext(isIn : true);
                         },
                         mode: "vào",
+                        result: resultAPI,
                         plate: parsedTextIn,
                       ),
                     )
@@ -315,6 +319,7 @@ class _InOutScreenState extends State<InOutScreen> {
                           parsethetext(isIn : false);
                         } ,
                         mode: "ra",
+                        result: resultAPI,
                         plate: parsedTextOut,
                       ),
                     )
